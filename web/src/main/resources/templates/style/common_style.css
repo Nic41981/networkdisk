@@ -1,0 +1,11 @@
+body{
+    background: url("../image/bg.jpg") no-repeat center center fixed;
+    background-size: 100% 100%;
+}
+@font-face {
+    font-family: "BoLuoJiang";
+    src: url("../font/title_font.ttf") format("truetype");
+}
+a{color: black}
+a:hover{color: black}
+a:visited{color: black}
