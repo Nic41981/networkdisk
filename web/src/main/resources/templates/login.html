@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录-青叶网盘</title>
+    <link rel="stylesheet" type="text/css" href="style/common_style.css">
+    <link rel="stylesheet" type="text/css" href="style/login_style.css"/>
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+</head>
+<body>
+    <h1 class="title">青叶网盘</h1>
+    <div class="login_box">
+        <h2 class="title2">登录</h2>
+        <hr style="color: black"/>
+        <form action="/login" method="post">
+            <table class="login_table">
+                <tr>
+                    <td class="td1">
+                        <label for="user_name">用户名:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="user_name" type="text" style="width: 150px" maxlength="20"/>
+                    </td>
+                    <td class="td1">
+                        <a class="small_text" href="#">注册新用户</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="password">密码:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="password" type="password" style="width: 150px" maxlength="20"/>
+                    </td>
+                    <td class="td1">
+                        <a class="small_text" href="#">忘记密码?</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="vc_code">验证码:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="vc_code" type="text" style="width: 50px" maxlength="4"/>
+                        <label for="vc_code" style="vertical-align: middle;float: right">
+                            <img id="vc_img" alt="验证码" src="/verification?"/>
+                        </label>
+                    </td>
+                    <td class="td1 small_text">点击图片刷新</td>
+                </tr>
+                <tr>
+                    <td class="td1"></td>
+                    <td class="td2">
+                        <input id="auto_login" type="checkbox">
+                        <label for="auto_login" class="small_text">下次自动登录</label>
+                    </td>
+                    <td class="td1"></td>
+                </tr>
+                <tr th:if="${result} != null">
+                    <td class="td1"></td>
+                    <td class="td2 small_text result" th:text="${result}"></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button class="login_btn">登录</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript" src="js/login.js"></script>
+</body>
+</html>
