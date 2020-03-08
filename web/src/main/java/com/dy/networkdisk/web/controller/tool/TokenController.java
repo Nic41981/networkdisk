@@ -21,6 +21,7 @@ public class TokenController {
     public void setOnlineToken(HttpServletRequest request, HttpServletResponse response){
         String token = UUID.randomUUID().toString();
         Cookie cookie = new Cookie(Const.ONLINE_TOKEN_KEY,token);
+        cookie.setPath("/");
         response.addCookie(cookie);
         try {
             response.sendRedirect((String)request.getAttribute(Const.TARGET_PATH));

@@ -3,15 +3,20 @@ server:
 
 spring:
   datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://127.0.0.1:3306/networkdisk
+    username: root
+    password: admin
   redis:
     host: localhost
     port: 6379
-    database: 0
+
+mybatis:
+  mapper-locations: classpath:/mapper/**.xml
 
 dubbo:
   application:
-    name: userMudel
+    name: userModule
   scan:
     base-packages: com.dy.networkdisk.user.service
   protocol:

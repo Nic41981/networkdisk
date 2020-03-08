@@ -1,6 +1,7 @@
 package com.dy.networkdisk.web.interceptor;
 
 import com.dy.networkdisk.web.config.Const;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -8,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 @Component
 public class TokenInterceptor extends HandlerInterceptorAdapter {
 

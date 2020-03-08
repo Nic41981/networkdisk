@@ -29,9 +29,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### thymeleaf调试 ###
-/src/main/resources/templates/font/
-/src/main/resources/templates/image/
-/src/main/resources/templates/js/
-/src/main/resources/templates/style/

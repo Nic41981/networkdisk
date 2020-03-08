@@ -1,3 +1,3 @@
 $("#vc_img").click(function () {
-    $(this).attr("src","/verification?")
+    $(this).attr("src","/verification");
 });

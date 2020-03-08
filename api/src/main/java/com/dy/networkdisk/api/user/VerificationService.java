@@ -3,5 +3,6 @@ package com.dy.networkdisk.api.user;
 import java.awt.image.BufferedImage;
 
 public interface VerificationService {
-    byte[] getVerificationCode(String token);
+    void storageAnswer(String token,String answer);
+    boolean checkVerification(String token,String code);
 }

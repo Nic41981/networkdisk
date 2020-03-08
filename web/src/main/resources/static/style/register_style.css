@@ -1,0 +1,47 @@
+.title{
+    text-align: center;
+    font-size: 40px;
+    font-family: BoLuoJiang, monospace;
+    margin-top: 50px;
+}
+
+.register_box{
+    margin: 50px auto;
+    width: 50%;
+    background-color: rgba(200,200,200,0.75);
+    border-radius: 5px;
+}
+
+.title2{
+    text-align: center;
+    padding-top: 10px;
+    margin-bottom: 0;
+}
+
+.register_table{
+    margin: 10px auto;
+}
+
+.td1{
+    width: 75px;
+}
+
+.td2{
+    width: 150px;
+}
+
+.small_text{
+    font-size: 8px;
+}
+
+.result{
+    color: red;
+    text-align: center;
+}
+
+.register_btn{
+    display: block;
+    margin: 0 auto 10px;
+    width: 200px;
+    height: 30px;
+}

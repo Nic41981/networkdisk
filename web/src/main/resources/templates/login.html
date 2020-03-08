@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>登录-青叶网盘</title>
-    <link rel="stylesheet" type="text/css" href="style/common_style.css">
-    <link rel="stylesheet" type="text/css" href="style/login_style.css"/>
-    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="'/style/common_style.css'" href="../static/style/common_style.css">
+    <link rel="stylesheet" type="text/css" th:href="'/style/login_style.css'" href="../static/style/login_style.css"/>
+    <script type="text/javascript" th:src="'/js/jquery-3.4.1.min.js'" src="../static/js/jquery-3.4.1.min.js"></script>
 </head>
 <body>
     <h1 class="title">青叶网盘</h1>
     <div class="login_box">
         <h2 class="title2">登录</h2>
         <hr style="color: black"/>
-        <form action="/login" method="post">
+        <form action="/user/login" method="post">
             <table class="login_table">
                 <tr>
                     <td class="td1">
@@ -22,7 +22,7 @@
                         <input id="user_name" type="text" style="width: 150px" maxlength="20"/>
                     </td>
                     <td class="td1">
-                        <a class="small_text" href="#">注册新用户</a>
+                        <a class="small_text" href="/user/register">注册新用户</a>
                     </td>
                 </tr>
                 <tr>
@@ -41,9 +41,9 @@
                         <label for="vc_code">验证码:</label>
                     </td>
                     <td class="td2">
-                        <input id="vc_code" type="text" style="width: 50px" maxlength="4"/>
+                        <input id="vc_code" type="text" autocomplete="off" style="width: 50px" maxlength="2"/>
                         <label for="vc_code" style="vertical-align: middle;float: right">
-                            <img id="vc_img" alt="验证码" src="/verification?"/>
+                            <img id="vc_img" alt="验证码" src="../static/image/vc.tmp.jpeg" th:src="'/verification?'"/>
                         </label>
                     </td>
                     <td class="td1 small_text">点击图片刷新</td>
@@ -68,6 +68,6 @@
             </table>
         </form>
     </div>
-    <script type="text/javascript" src="js/login.js"></script>
+    <script type="text/javascript" th:src="'/js/login.js'" src="../static/js/login.js"></script>
 </body>
 </html>

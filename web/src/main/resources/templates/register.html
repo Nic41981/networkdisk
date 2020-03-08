@@ -1,10 +1,80 @@
 <!DOCTYPE html>
-<html lang="cn">
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>注册-青叶网盘</title>
+    <link rel="stylesheet" th:href="'/style/common_style.css'" href="../static/style/common_style.css">
+    <link rel="stylesheet" th:href="'/style/register_style.css'" href="../static/style/register_style.css">
+    <script type="text/javascript" th:src="'/js/jquery-3.4.1.min.js'" src="../static/js/jquery-3.4.1.min.js"></script>
 </head>
 <body>
-
+<h1 class="title">青叶网盘</h1>
+    <div class="register_box">
+        <h2 class="title2">注册</h2>
+        <hr style="color: black"/>
+        <form action="/user/register" method="post">
+            <table class="register_table">
+                <tr>
+                    <td class="td1">
+                        <label for="user_name">用户名:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="user_name" name="username" type="text" th:value="${info!=null?info.username:''}" style="width: 150px" maxlength="20"/>
+                    </td>
+                    <td class="td1">
+                        <a class="small_text" href="/user/login">登录已有账户</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="password">密码:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="password" name="password" type="password" th:value="${info!=null?info.password:''}" style="width: 150px" maxlength="20">
+                    </td>
+                    <td class="td1"></td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="confirm_password">确认密码:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="confirm_password" name="confirmPassword" type="password" th:value="${info!=null?info.confirmPassword:''}" style="width: 150px" maxlength="20">
+                    </td>
+                    <td class="td1"></td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="email">邮箱:</label>
+                    </td>
+                    <td>
+                        <input id="email" name="email" type="email" th:value="${info!=null?info.email:''}" style="width: 150px" maxlength="60">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td1">
+                        <label for="vc_code">验证码:</label>
+                    </td>
+                    <td class="td2">
+                        <input id="vc_code" name="verificationCode" type="text" autocomplete="off" style="width: 50px" maxlength="2"/>
+                        <label for="vc_code" style="vertical-align: middle;float: right">
+                            <img id="vc_img" th:src="'/verification?'" src="../static/image/vc.tmp.jpeg" alt="验证码">
+                        </label>
+                    </td>
+                    <td class="td1 small_text">点击图片刷新</td>
+                </tr>
+                <tr th:if="${result} != null">
+                    <td class="td1"></td>
+                    <td class="td2 small_text result" th:text="${result}"></td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <button id="register_btn" class="register_btn">注册</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type="text/javascript" th:src="'/js/register.js'" src="../static/js/register.js"></script>
 </body>
 </html>

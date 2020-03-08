@@ -1,35 +1,31 @@
 package com.dy.networkdisk.user.service;
 
+import com.dy.networkdisk.api.config.UserConst;
 import com.dy.networkdisk.api.user.VerificationService;
 import com.dy.networkdisk.user.config.Const;
-import com.google.code.kaptcha.impl.DefaultKaptcha;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-
-import javax.imageio.ImageIO;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import org.springframework.data.redis.core.RedisTemplate;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class VerificationServiceImpl implements VerificationService {
 
-    private final DefaultKaptcha kaptcha;
-    private final StringRedisTemplate template;
+    private final RedisTemplate<String,Object> template;
 
-    public byte[] getVerificationCode(String token){
-        String code = kaptcha.createText();
+    public void storageAnswer(String token ,String answer){
         String key = Const.FUNC_VERIFICATION_REDIS_KEY + ":" + token;
-        template.opsForValue().set(key,code,5, TimeUnit.MINUTES);
-        ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(kaptcha.createImage(code),"jpg",imageBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return imageBytes.toByteArray();
+        template.opsForValue().set(key,answer, UserConst.verificationExpire, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public boolean checkVerification(String token, String code) {
+        String key = Const.FUNC_VERIFICATION_REDIS_KEY + ":" + token;
+        String answer = (String)template.opsForValue().get(key);
+        return code.equals(answer);
     }
 }
