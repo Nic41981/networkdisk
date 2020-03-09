@@ -1,5 +1,5 @@
 server:
-  port: 8099
+  port: 8099 #服务运行端口
 spring:
   mail:
     host: #邮箱域名
@@ -8,9 +8,12 @@ spring:
     port: 25
     protocol: smtp
     default-encoding: UTF-8
-  artemis:
-    host: localhost
-    port: 61616
-    user: admin
-    password: admin
-    mode: embedded
+  activemq:
+    broker-url: tcp://localhost:61616 #activeMQ地址
+    user: admin #activeMQ用户名
+    password: admin #activeMQ密码
+    in-memory: false #启用内存模式
+    pool:
+      enabled: true #启用连接池
+      max-connections: 5 #最大连接数
+      idle-timeout: 1h #空闲连接过期时间

@@ -1,13 +1,13 @@
 server:
-  port: 8080
+  port: 8080 #服务运行端口
 
 spring:
   thymeleaf:
-    cache: false
+    cache: false #thymeleaf缓存
 
 dubbo:
   application:
-    name: web
+    name: web #Dubbo服务名
   registry:
-    address: zookeeper://127.0.0.1:2181
+    address: zookeeper://127.0.0.1:2181 #zookeeper地址
 
