@@ -42,46 +42,48 @@ public class UserController {
     }
 
     @PostMapping("/user/register")
-    public ModelAndView submitRegister(HttpServletRequest request,ModelAndView model, RegisterInfoVo info){
-        if (ParamUtil.isNull(info.getUsername()) || info.getUsername().length() < 2){
+    public ModelAndView submitRegister(HttpServletRequest request,ModelAndView model, RegisterInfoVo info) {
+        if (ParamUtil.isNull(info.getUsername()) || info.getUsername().length() < 2) {
             info.setUsername("");
-            return registerError(model,info,"用户名长度2~20!");
+            return registerError(model, info, "用户名合法长度为2~20!");
         }
-        if (!info.getUsername().matches("^[\\w\\u4e00-\\u9fa5]+$")){
+        if (!info.getUsername().matches("^[\\w\\u4e00-\\u9fa5]+$")) {
             info.setUsername("");
-            return registerError(model,info,"用户名合法字符为数字、字母、下划线和汉字!");
+            return registerError(model, info, "用户名合法字符为数字、字母、下划线和汉字!");
         }
-        if (ParamUtil.isNull(info.getPassword()) || info.getPassword().length() < 5){
+        if (ParamUtil.isNull(info.getPassword()) || info.getPassword().length() < 5) {
             info.setPassword("");
             info.setConfirmPassword("");
-            return registerError(model,info,"密码长度5~20!");
+            return registerError(model, info, "密码合法长度为5~20!");
         }
-        if (!info.getPassword().equals(info.getConfirmPassword())){
+        if (!info.getPassword().equals(info.getConfirmPassword())) {
             info.setPassword("");
             info.setConfirmPassword("");
-            return registerError(model,info,"密码不一致!");
+            return registerError(model, info, "两次密码不一致!");
         }
-        if (ParamUtil.isNull(info.getEmail())){
+        if (ParamUtil.isNull(info.getEmail())) {
             info.setEmail("");
-            return registerError(model,info,"邮箱不得为空!");
+            return registerError(model, info, "邮箱不得为空!");
         }
-        String token = (String)request.getAttribute(Const.ONLINE_TOKEN_KEY);
-        if (!verificationService.checkVerification(token,info.getVerificationCode())){
+        String token = (String) request.getAttribute(Const.ONLINE_TOKEN_KEY);
+        if (!verificationService.checkVerification(token, info.getVerificationCode())) {
             info.setVerificationCode("");
-            return registerError(model,info,"验证码错误!");
+            return registerError(model, info, "验证码错误!");
         }
-        String tempAccountToken = service.tryLockUsername(info.getUsername());
-        if (tempAccountToken != null){
-            RegisterInfoDTO dto = new RegisterInfoDTO();
-            dto.setUsername(info.getUsername());
-            dto.setPassword(info.getPassword());
-            dto.setEmail(info.getEmail());
-            dto.setCreateTime(new Date());
-            service.register(tempAccountToken,dto);
+        String activeToken = service.tryLockUsername(info.getUsername());
+        if (activeToken == null) {
+            info.setEmail("");
+            return registerError(model, info, "该用户名已注册!");
         }
+        RegisterInfoDTO dto = new RegisterInfoDTO();
+        dto.setUsername(info.getUsername());
+        dto.setPassword(info.getPassword());
+        dto.setEmail(info.getEmail());
+        dto.setCreateTime(new Date());
+        service.register(activeToken, dto);
         model.setViewName("register");
-        model.addObject("info",info);
-        model.addObject("result","功能暂未开放");
+        model.addObject("info", info);
+        model.addObject("result", "功能暂未开放");
         return model;
     }
 

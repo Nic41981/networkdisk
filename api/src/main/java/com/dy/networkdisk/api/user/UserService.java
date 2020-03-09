@@ -6,7 +6,7 @@ public interface UserService {
 
     String tryLockUsername(String username);
 
-    void register(String token,RegisterInfoDTO RegisterInfo);
+    void register(String activeToken,RegisterInfoDTO RegisterInfo);
 
     boolean hasLogin(String token);
 

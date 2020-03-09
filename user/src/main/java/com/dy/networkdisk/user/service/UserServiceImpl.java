@@ -1,6 +1,7 @@
 package com.dy.networkdisk.user.service;
 
 import com.dy.networkdisk.api.config.UserConst;
+import com.dy.networkdisk.api.dto.email.AccountActiveDTO;
 import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
 import com.dy.networkdisk.api.user.UserService;
 import com.dy.networkdisk.user.config.Const;
@@ -12,6 +13,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -22,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper mapper;
     private final StringRedisTemplate template;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public String tryLockUsername(String username) {
@@ -49,11 +52,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(String token,RegisterInfoDTO registerInfo) {
+    public void register(String activeToken, RegisterInfoDTO registerInfo) {
         registerInfo.setPassword(BCrypt.hashpw(registerInfo.getPassword(),BCrypt.gensalt()));
-        String key = Const.FUNC_TEMP_ACCOUNT_REDIS_KEY + ":" + token;
+        String key = Const.FUNC_TEMP_ACCOUNT_REDIS_KEY + ":" + activeToken;
         String value = GsonTool.toJson(registerInfo);
-        template.opsForValue().set(key,value,UserConst.tempAccountExpire, TimeUnit.SECONDS);
+        template.opsForValue().set(key,value,UserConst.tempAccountExpire, TimeUnit.MINUTES);
+        AccountActiveDTO dto = new AccountActiveDTO();
+        dto.setActiveURL(UserConst.activeHost + "/user/active");
+        dto.setUsername(registerInfo.getUsername());
+        dto.setToken(activeToken);
+        String message = GsonTool.toJson(dto);
+        jmsTemplate.convertAndSend("account_active",message);
     }
 
     @Override

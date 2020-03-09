@@ -1,0 +1,16 @@
+server:
+  port: 8099
+spring:
+  mail:
+    host: #邮箱域名
+    username: #邮箱账号
+    password: #邮箱授权码
+    port: 25
+    protocol: smtp
+    default-encoding: UTF-8
+  artemis:
+    host: localhost
+    port: 61616
+    user: admin
+    password: admin
+    mode: embedded

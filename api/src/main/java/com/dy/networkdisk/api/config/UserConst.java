@@ -33,8 +33,13 @@ public class UserConst {
 
 
     /**
-     * 临时用户过期时长(s)
-     * default= 60*60*12 (12小时)
+     * 临时用户过期时长(min)
+     * default= 60*12 (12小时)
      */
-    public static long tempAccountExpire = 60*60*12;
+    public static long tempAccountExpire = 60*12;
+
+    /**
+     * 账户激活服务器(web)域名
+     */
+    public static String activeHost = "127.0.0.1:8080";
 }
