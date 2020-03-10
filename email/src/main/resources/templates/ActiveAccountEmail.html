@@ -6,31 +6,27 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <title>激活您的网盘账户</title>
     <style type="text/css">
-        .context{
-            text-indent: 2em;
-        }
-        .btn{
-            width: 100%;
-            height: 40px;
-            font-size: 20px;
-            background-color: lightgreen;
-            margin: 10px auto 20px;
-        }
-        .foot{
-            float: right;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <p>亲爱的<u><i th:text="${username}">用户</i></u>:</p>
-    <p class="context">感谢你注册青叶网盘，为了方便您使用和密码找回，请点击下方按钮激活您的账户，希望您在青叶网盘的使用过程中有一个愉快的体验。</p>
+    <p style="text-indent: 2em">
+        感谢您选择青叶网盘！
+    </p>
+    <p style="text-indent: 2em">
+        为了方便您使用和密码找回，请点击下方按钮激活您的账户。如果该账户不是您注册的，很抱歉打扰您，请忽略该邮件即可。
+    </p>
+    <p style="text-indent: 2em">
+        希望您在青叶网盘的使用过程中有一个愉快的体验。
+    </p>
     <form th:action="${activeURL}" method="post">
         <input type="hidden" name="username" th:value="${username}">
         <input type="hidden" name="token" th:value="${token}">
-        <button class="btn"><b>激活账户</b></button>
+        <button style="width: 100%;height: 40px;font-size: 20px;background-color: lightgreen;margin: 10px auto 20px">
+            <b>激活账户</b>
+        </button>
     </form>
-    <div class="foot">
+    <div style="float: right;text-align: center">
         <i>青叶网盘</i>
         <p style="margin: 0 auto" th:text="${#dates.format(createTime,'yyyy年MM月dd日')}">2020年02月04日<p>
     </div>

@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class AccountActiveDTO {
+    private String target;
     private String activeURL;
     private String username;
     private String token;

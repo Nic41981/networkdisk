@@ -5,8 +5,14 @@
   待自动失效以提高重名查询性能。
 3.用户名锁时长略大于用户信息缓存时长以确保服务器确实处理激活业务或用户信息确实失效。
 4.若用户未能及时激活则等待redis缓存信息以及锁自动过期。
+
 #2020-03-08
 基于以下三点将图形验证码的生成转移至web模块
 1.图形验证码产生图片属于网页渲染的一部份
 2.通过Dubbo传输图片比较繁琐
 3.Dubbo传输图片信息违背Dubbo开发的小数据量高并发的原则
+
+#2020-03-09
+消息队列消费者使用的@JmsListener注解在ContextListener中初始化，而spring中bean的注解（@Component，@Service等）
+在dispatcher.xml中初始化，优先级低于前者，故消息队列消费者使用@Autowired注入时找不到对应的bean，如果必须使用注入，
+解决方案：https://blog.csdn.net/gaoshili001/article/details/77776863

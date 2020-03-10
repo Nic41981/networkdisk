@@ -4,6 +4,11 @@ package com.dy.networkdisk.api.config;
  * 用户可配置信息
  */
 public class UserConst {
+
+    /**
+     * 网盘名称
+     */
+
     /**
      * 验证码字符集
      */
@@ -42,4 +47,9 @@ public class UserConst {
      * 账户激活服务器(web)域名
      */
     public static String activeHost = "127.0.0.1:8080";
+
+    /**
+     * 邮件署名
+     */
+    public static String mailSignature = "青叶网盘";
 }

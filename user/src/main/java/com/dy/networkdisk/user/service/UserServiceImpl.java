@@ -7,6 +7,7 @@ import com.dy.networkdisk.api.user.UserService;
 import com.dy.networkdisk.user.config.Const;
 import com.dy.networkdisk.user.dao.UserMapper;
 import com.dy.networkdisk.user.tool.GsonTool;
+import com.dy.networkdisk.user.tool.QueueTool;
 import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.Service;
 import org.mindrot.jbcrypt.BCrypt;
@@ -58,11 +59,12 @@ public class UserServiceImpl implements UserService {
         String value = GsonTool.toJson(registerInfo);
         template.opsForValue().set(key,value,UserConst.tempAccountExpire, TimeUnit.MINUTES);
         AccountActiveDTO dto = new AccountActiveDTO();
+        dto.setTarget(registerInfo.getEmail());
         dto.setActiveURL(UserConst.activeHost + "/user/active");
         dto.setUsername(registerInfo.getUsername());
         dto.setToken(activeToken);
         String message = GsonTool.toJson(dto);
-        jmsTemplate.convertAndSend("account_active",message);
+        jmsTemplate.convertAndSend(QueueTool.get("email.account.active"),message);
     }
 
     @Override
