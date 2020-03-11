@@ -1,5 +1,5 @@
 server:
-  port: 8099 #服务运行端口
+  port: 8280 #服务运行端口
 spring:
   mail:
     host: #邮箱域名

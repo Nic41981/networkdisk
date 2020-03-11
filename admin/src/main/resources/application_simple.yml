@@ -1,0 +1,13 @@
+server:
+  port: 8180 #服务运行端口
+
+dubbo:
+  application:
+    name: adminModule #Dubbo服务名
+  scan:
+    base-packages: com.dy.networkdisk.admin.service
+  protocol:
+    name: dubbo
+    port: 18180 #Dubbo开放端口
+  registry:
+    address: zookeeper://127.0.0.1:2181 #zookeeper地址
