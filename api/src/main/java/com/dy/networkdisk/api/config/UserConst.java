@@ -8,6 +8,7 @@ public class UserConst {
     /**
      * 网盘名称
      */
+    public static String diskName = "青叶网盘";
 
     /**
      * 验证码字符集

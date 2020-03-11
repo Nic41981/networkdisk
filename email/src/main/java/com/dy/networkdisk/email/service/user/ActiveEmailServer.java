@@ -10,7 +10,6 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import javax.mail.MessagingException;
 import java.util.Date;
 
 @Service
@@ -20,7 +19,7 @@ public class ActiveEmailServer {
     private final TemplateEngine engine;
 
     @JmsListener(destination = "email.account.active")
-    public void send(String message) throws MessagingException {
+    public void send(String message) {
         AccountActiveDTO activeMsg = GsonTool.toObject(message,AccountActiveDTO.class);
         Context context = new Context();
         context.setVariable("activeURL",activeMsg.getActiveURL());

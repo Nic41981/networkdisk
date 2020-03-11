@@ -16,3 +16,6 @@
 消息队列消费者使用的@JmsListener注解在ContextListener中初始化，而spring中bean的注解（@Component，@Service等）
 在dispatcher.xml中初始化，优先级低于前者，故消息队列消费者使用@Autowired注入时找不到对应的bean，如果必须使用注入，
 解决方案：https://blog.csdn.net/gaoshili001/article/details/77776863
+
+#2020-03-10
+初步规划模块接口
