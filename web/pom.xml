@@ -19,12 +19,6 @@
     </properties>
 
     <dependencies>
-        <!--    api    -->
-        <dependency>
-            <groupId>com.dy.networkdisk</groupId>
-            <artifactId>api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
         <!--    thymeleaf    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+        <!--    api    -->
+        <dependency>
+            <groupId>com.dy.networkdisk</groupId>
+            <artifactId>api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <!--    lombok    -->
         <dependency>
             <groupId>org.projectlombok</groupId>
