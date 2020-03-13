@@ -1,6 +1,6 @@
 package com.dy.networkdisk.admin.config;
 
-import com.dy.networkdisk.admin.tool.ConfigKeyTransTool;
+import com.dy.networkdisk.api.config.ConfigRedisKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,12 @@ public class ConfigInitTask implements ApplicationRunner {
         HashMap<String,String> configMap = new HashMap<>();
         for (ConfigPropInfo it : ConfigPropInfo.values()){
             //初始化默认配置
-            configMap.put(it.getRedisKey(),it.getDefaultValue());
+            try {
+                ConfigRedisKey redisKey = ConfigRedisKey.valueOf(it.name());
+                configMap.put(redisKey.getKey(),it.getDefaultValue());
+            }catch (Exception e){
+                log.error("核心Redis键值信息缺失,请检查api模块版本是否正确",e);
+            }
         }
         try {
             File configFile = new File(Const.CONFIG_PATH);
@@ -45,12 +50,13 @@ public class ConfigInitTask implements ApplicationRunner {
             }
             for (String key : properties.stringPropertyNames()){
                 //更新用户配置信息
-                String redisKey = ConfigKeyTransTool.toRedisKey(key);
-                if (redisKey == null){
+                try{
+                    ConfigRedisKey redisKey = ConfigRedisKey.valueOf(key);
+                    configMap.put(redisKey.getKey(),properties.getProperty(key));
+                } catch (Exception e){
+
                     log.warn("忽略未知设置:" + key);
-                    continue;
                 }
-                configMap.put(redisKey,properties.getProperty(key));
             }
         } catch (Exception e){
             log.warn(e.getMessage(),e);
@@ -66,7 +72,7 @@ public class ConfigInitTask implements ApplicationRunner {
             }
             Properties properties = new Properties();
             for (ConfigPropInfo it : ConfigPropInfo.values()){
-                properties.setProperty(it.getPropKey(),it.getDefaultValue());
+                properties.setProperty(it.getKey(),it.getDefaultValue());
             }
             properties.store(new FileOutputStream(configFile),null);
         }catch (Exception e){

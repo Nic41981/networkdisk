@@ -4,15 +4,15 @@ public class Const {
     /**
      * 验证码预设字符集-数字
      */
-    public static final String VERIFICATION_NUM = "0123456789";
+    public static final String VERIFICATION_NUMBER = "0123456789";
     /**
      * 验证码预设字符集-小写字母
      */
-    public static final String VERIFICATION_LOWER_ALPHA = "abcdefghijklmnopqrstuvwxyz";
+    public static final String VERIFICATION_LOWER_ENGLISH = "abcdefghijklmnopqrstuvwxyz";
     /**
      * 验证码预设字符集-大写字母
      */
-    public static final String VERIFICATION_UPPER_ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public static final String VERIFICATION_UPPER_ENGLISH = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     /**
      * 验证码预设字符集-汉字
      */
@@ -43,4 +43,8 @@ public class Const {
      * 内部跳转用户请求地址主键
      */
     public static final String TARGET_PATH = "target_path";
+
+
+    /*图形验证码信息*/
+    public static final String FUNC_VERIFICATION_REDIS_KEY = "QYDisk::web::verification";
 }

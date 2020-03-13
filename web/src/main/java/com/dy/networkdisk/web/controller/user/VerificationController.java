@@ -2,7 +2,7 @@ package com.dy.networkdisk.web.controller.user;
 
 import com.dy.networkdisk.api.user.VerificationService;
 import com.dy.networkdisk.web.config.Const;
-import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.dy.networkdisk.web.tool.KaptchaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -23,7 +23,7 @@ public class VerificationController {
     @Reference
     private VerificationService service;
 
-    private final DefaultKaptcha kaptcha;
+    private final KaptchaUtil kaptcha;
 
     @GetMapping("/verification")
     public void getVerificationImage(HttpServletRequest request, HttpServletResponse response){
@@ -34,14 +34,13 @@ public class VerificationController {
             response.addHeader("Cache-Control", "post-check=0, pre-check=0");
             response.setHeader("Pragma", "no-cache");
             response.setContentType("image/jpeg");
-            String answer = kaptcha.createText();
+            String code = kaptcha.createText(token);
             try(ServletOutputStream out = response.getOutputStream()){
-                ImageIO.write(kaptcha.createImage(answer),"jpg",out);
+                ImageIO.write(kaptcha.createImage(code),"jpg",out);
                 out.flush();
             }catch (Exception e){
                 e.printStackTrace();
             }
-            service.storageAnswer(token,answer);
         }
     }
 }
