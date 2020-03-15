@@ -1,6 +1,5 @@
 package com.dy.networkdisk.admin.config;
 
-import com.dy.networkdisk.api.config.ConfigRedisKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,7 +25,7 @@ public enum ConfigPropInfo {
     WEB_VERIFICATION_BACKGROUND_COLOR_FROM("web.verification.background.color.from","darkGrag"),
     WEB_VERIFICATION_BACKGROUND_COLOR_TO("web.verification.background.color.to","gray"),
 
-    USER_GUESTS_EXPIRE("user.guests.expire","720"),
+    USER_GUESTS_EXPIRE("user.guests.expire","12"),
     USER_GUESTS_ACTIVE_HOST("user.guests.active.host","127.0.0.1:8080"),
 
     MAIL_SIGNATURE("mail.signature","青叶网盘");

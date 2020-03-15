@@ -35,15 +35,14 @@ public class Const {
             "夏困刘罪亡鞋健模败伴守挥鲜财孤枪禁恐伙杰迹妹藸遍盖副坦牌江顺秋萨菜划授归浪听凡预奶雄升碃编典袋莱含盛济蒙棋端腿招释介烧误";
 
     /**
+     * 用户IP信息主键
+     */
+    public static final String IP_KEY = "ip";
+
+    /**
      * 在线Cookie主键
      */
     public static final String ONLINE_TOKEN_KEY = "QYDisk_online";
-
-    /**
-     * 内部跳转用户请求地址主键
-     */
-    public static final String TARGET_PATH = "target_path";
-
 
     /*Redis图形验证码信息*/
     public static final String FUNC_VERIFICATION_REDIS_KEY = "QYDisk::web::verification";

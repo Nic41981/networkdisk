@@ -20,7 +20,7 @@ public class ActiveEmailServer {
 
     @JmsListener(destination = "email.account.active")
     public void send(String message) {
-        AccountActiveDTO activeMsg = GsonTool.toObject(message,AccountActiveDTO.class);
+        AccountActiveDTO activeMsg = GsonTool.toObject(message, AccountActiveDTO.class);
         Context context = new Context();
         context.setVariable("activeURL",activeMsg.getActiveURL());
         context.setVariable("username",activeMsg.getUsername());
@@ -28,6 +28,6 @@ public class ActiveEmailServer {
         context.setVariable("signature", UserConst.mailSignature);
         context.setVariable("createTime",new Date());
         String html = engine.process("ActiveAccountEmail",context);
-        MailSenderTool.sendByHtml(activeMsg.getTarget(),"激活账户",html);
+        MailSenderTool.sendByHtml(activeMsg.getEmail(),"激活账户",html);
     }
 }

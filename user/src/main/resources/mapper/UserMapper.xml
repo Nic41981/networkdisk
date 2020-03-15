@@ -6,7 +6,7 @@
     <insert id="register">
         insert into user(id, username, password, email) values();
     </insert>
-    <select id="checkUserExist" parameterType="string" resultType="int">
+    <select id="checkUsernameExist" parameterType="string" resultType="int">
         select count(1) from user where username = #{username} and state = 0;
     </select>
 </mapper>

@@ -1,12 +1,12 @@
 package com.dy.networkdisk.api.user;
 
-import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
+import com.dy.networkdisk.api.dto.user.GuestsDTO;
 
 public interface UserService {
 
     String getGuestsLock(String username);
 
-    void register(String activeToken,RegisterInfoDTO RegisterInfo);
+    void register(GuestsDTO guests);
 
     boolean hasLogin(String token);
 

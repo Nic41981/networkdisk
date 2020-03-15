@@ -5,5 +5,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface UserMapper {
     boolean register();
-    int checkUserExist(String username);
+    int checkUsernameExist(String username);
 }

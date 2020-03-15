@@ -1,8 +1,11 @@
 package com.dy.networkdisk.web.controller.user;
 
-import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
+import com.dy.networkdisk.api.config.ConfigRedisKey;
+import com.dy.networkdisk.api.dto.user.GuestsDTO;
 import com.dy.networkdisk.api.user.UserService;
 import com.dy.networkdisk.web.config.Const;
+import com.dy.networkdisk.web.tool.BeanTransUtil;
+import com.dy.networkdisk.web.tool.ConfigUtil;
 import com.dy.networkdisk.web.tool.StringUtil;
 import com.dy.networkdisk.web.tool.KaptchaUtil;
 import com.dy.networkdisk.web.vo.RegisterInfoVo;
@@ -12,22 +15,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
     private final KaptchaUtil kaptcha;
+    private final ConfigUtil config;
 
     @Reference
     private UserService service;
 
     @GetMapping("/user/login")
-    public String getLoginPage(){
+    public String getLoginPage(ModelAndView model){
+        model.setViewName("login");
+        boolean allowRegister = config.getBoolean(ConfigRedisKey.WEB_ALLOW_REGISTER,Boolean.FALSE);
+        model.addObject("allow_register",allowRegister);
         return "login";
     }
 
@@ -46,6 +51,7 @@ public class UserController {
     @PostMapping("/user/register")
     public ModelAndView submitRegister(HttpServletRequest request,ModelAndView model, RegisterInfoVo info) {
         String token = (String) request.getAttribute(Const.ONLINE_TOKEN_KEY);
+        String ip = (String) request.getAttribute(Const.IP_KEY);
         if (StringUtil.isNull(info.getUsername()) || StringUtil.inLengthRange(info.getUsername(),2,20)) {
             info.setUsername("");
             return registerError(model, info, "用户名长度不正确（2-20）");
@@ -72,17 +78,15 @@ public class UserController {
             info.setVerificationCode("");
             return registerError(model, info, "验证码错误");
         }
-        String activeToken = service.getGuestsLock(info.getUsername());
-        if (activeToken == null) {
+        String guestsLock = service.getGuestsLock(info.getUsername());
+        if (guestsLock == null) {
             info.setUsername("");
             return registerError(model, info, "该用户名已注册!");
         }
-        RegisterInfoDTO dto = new RegisterInfoDTO();
-        dto.setUsername(info.getUsername());
-        dto.setPassword(info.getPassword());
-        dto.setEmail(info.getEmail());
-        dto.setCreateTime(new Date());
-        service.register(activeToken, dto);
+        GuestsDTO guests = BeanTransUtil.trans(info,new GuestsDTO());
+        guests.setIp(ip);
+        guests.setLock(guestsLock);
+        service.register(guests);
         model.setViewName("register");
         model.addObject("info", info);
         model.addObject("result", "功能暂未开放");
@@ -94,12 +98,5 @@ public class UserController {
         model.addObject("info",info);
         model.addObject("result",result);
         return model;
-    }
-
-    @GetMapping("/test")
-    @ResponseBody
-    public String test(){
-        service.getGuestsLock("123");
-        return "success";
     }
 }

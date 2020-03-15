@@ -1,13 +1,15 @@
 package com.dy.networkdisk.user.service;
 
-import com.dy.networkdisk.api.config.UserConst;
+import com.dy.networkdisk.api.config.ConfigRedisKey;
 import com.dy.networkdisk.api.dto.email.AccountActiveDTO;
-import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
+import com.dy.networkdisk.api.dto.user.GuestsDTO;
 import com.dy.networkdisk.api.user.UserService;
 import com.dy.networkdisk.user.config.Const;
 import com.dy.networkdisk.user.dao.UserMapper;
+import com.dy.networkdisk.user.tool.BeanTransUtil;
+import com.dy.networkdisk.user.tool.ConfigUtil;
 import com.dy.networkdisk.user.tool.GsonTool;
-import com.dy.networkdisk.user.tool.QueueTool;
+import com.dy.networkdisk.user.tool.QueueUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.Service;
 import org.mindrot.jbcrypt.BCrypt;
@@ -26,45 +28,45 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
     private final StringRedisTemplate template;
     private final JmsTemplate jmsTemplate;
+    private final ConfigUtil config;
+    private final QueueUtil queue;
 
+    /**
+     * 检查重名并给用户名加锁
+     * @param username 用户名
+     * @return 锁
+     */
     @Override
     public String getGuestsLock(String username) {
-        String token = template.execute((RedisCallback<String>) redisConnection -> {
-            //redis尝试对用户名加锁
-            String key = Const.FUNC_TEMP_ACCOUNT_LOCK_REDIS_KEY + ":" + username;
-            String value = UUID.randomUUID().toString();
-            Boolean result = redisConnection.setNX(key.getBytes(StandardCharsets.UTF_8),value.getBytes(StandardCharsets.UTF_8));
-            if (result != null && result){
-                //适当延长锁以确保同名用户影响消除
-                long expire = UserConst.tempAccountExpire + 60*30;
-                redisConnection.expire(key.getBytes(StandardCharsets.UTF_8),expire);
+        String key = Const.FUNC_GUESTS_LOCK_REDIS_KEY + ":" + username;
+        String value = UUID.randomUUID().toString();
+        Boolean result = template.execute((RedisCallback<Boolean>) connection -> connection.setNX(key.getBytes(StandardCharsets.UTF_8),value.getBytes(StandardCharsets.UTF_8)));
+        if (result != null && result){
+            //用户名锁定成功
+            long expire = config.getLong(ConfigRedisKey.USER_GUESTS_EXPIRE,12L);
+            template.expire(key,expire,TimeUnit.HOURS);
+            if (mapper.checkUsernameExist(username) == 0){
                 return value;
-            }
-            return null;
-        });
-        if (token != null) {
-            //加锁成功后检查正式用户同名
-            boolean result = mapper.checkUserExist(username) == 0;
-            if (result) {
-                return token;
             }
         }
         return null;
     }
 
     @Override
-    public void register(String activeToken, RegisterInfoDTO registerInfo) {
-        registerInfo.setPassword(BCrypt.hashpw(registerInfo.getPassword(),BCrypt.gensalt()));
-        String key = Const.FUNC_TEMP_ACCOUNT_REDIS_KEY + ":" + activeToken;
-        String value = GsonTool.toJson(registerInfo);
-        template.opsForValue().set(key,value,UserConst.tempAccountExpire, TimeUnit.MINUTES);
-        AccountActiveDTO dto = new AccountActiveDTO();
-        dto.setTarget(registerInfo.getEmail());
-        dto.setActiveURL(UserConst.activeHost + "/user/active");
-        dto.setUsername(registerInfo.getUsername());
-        dto.setToken(activeToken);
+    public void register(GuestsDTO guests) {
+        //密码加密
+        guests.setPassword(BCrypt.hashpw(guests.getPassword(),BCrypt.gensalt()));
+        //存储游客信息
+        String key = Const.FUNC_GUESTS_REDIS_KEY + ":" + guests.getLock();
+        String value = GsonTool.toJson(guests);
+        long expire = config.getLong(ConfigRedisKey.USER_GUESTS_EXPIRE,12L);
+        template.opsForValue().set(key,value,expire, TimeUnit.HOURS);
+        //发送激活邮件
+        String activeHost = config.getString(ConfigRedisKey.USER_GUESTS_ACTIVE_HOST,"127.0.0.1");
+        AccountActiveDTO dto = BeanTransUtil.trans(guests,new AccountActiveDTO());
+        dto.setActiveURL(activeHost + "/user/active");
         String message = GsonTool.toJson(dto);
-        jmsTemplate.convertAndSend(QueueTool.get("email.account.active"),message);
+        jmsTemplate.convertAndSend(queue.get(QueueUtil.MAIL_ACCOUNT_ACTIVE_QUEUE),message);
     }
 
     @Override

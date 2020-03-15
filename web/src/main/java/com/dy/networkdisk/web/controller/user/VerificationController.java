@@ -30,7 +30,7 @@ public class VerificationController {
             response.setContentType("image/jpeg");
             String code = kaptcha.createText(token);
             try(ServletOutputStream out = response.getOutputStream()){
-                ImageIO.write(kaptcha.createImage(code),"jpg",out);
+                ImageIO.write(kaptcha.createImage(code),"jpeg",out);
                 out.flush();
             }catch (Exception e){
                 e.printStackTrace();

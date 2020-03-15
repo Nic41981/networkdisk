@@ -1,4 +1,4 @@
-package com.dy.networkdisk.web.tool;
+package com.dy.networkdisk.user.tool;
 
 import com.dy.networkdisk.api.config.ConfigRedisKey;
 import lombok.RequiredArgsConstructor;
