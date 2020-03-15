@@ -2,11 +2,13 @@ package com.dy.networkdisk.web.controller.user;
 
 import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
 import com.dy.networkdisk.api.user.UserService;
-import com.dy.networkdisk.api.user.VerificationService;
 import com.dy.networkdisk.web.config.Const;
-import com.dy.networkdisk.web.config.ParamUtil;
+import com.dy.networkdisk.web.tool.StringUtil;
+import com.dy.networkdisk.web.tool.KaptchaUtil;
 import com.dy.networkdisk.web.vo.RegisterInfoVo;
+import lombok.RequiredArgsConstructor;
 import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,10 +18,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @Controller
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    @Reference
-    private VerificationService verificationService;
+    private final KaptchaUtil kaptcha;
 
     @Reference
     private UserService service;
@@ -43,36 +45,36 @@ public class UserController {
 
     @PostMapping("/user/register")
     public ModelAndView submitRegister(HttpServletRequest request,ModelAndView model, RegisterInfoVo info) {
-        if (ParamUtil.isNull(info.getUsername()) || info.getUsername().length() < 2) {
+        String token = (String) request.getAttribute(Const.ONLINE_TOKEN_KEY);
+        if (StringUtil.isNull(info.getUsername()) || StringUtil.inLengthRange(info.getUsername(),2,20)) {
             info.setUsername("");
-            return registerError(model, info, "用户名合法长度为2~20!");
+            return registerError(model, info, "用户名长度不正确（2-20）");
         }
         if (!info.getUsername().matches("^[\\w\\u4e00-\\u9fa5]+$")) {
             info.setUsername("");
-            return registerError(model, info, "用户名合法字符为数字、字母、下划线和汉字!");
+            return registerError(model, info, "用户名包含非法字符（数字、字母、下划线和汉字）");
         }
-        if (ParamUtil.isNull(info.getPassword()) || info.getPassword().length() < 5) {
+        if (StringUtil.isNull(info.getPassword()) || StringUtil.inLengthRange(info.getPassword(),5,20)) {
             info.setPassword("");
             info.setConfirmPassword("");
-            return registerError(model, info, "密码合法长度为5~20!");
+            return registerError(model, info, "密码长度不正确（5-20）");
         }
         if (!info.getPassword().equals(info.getConfirmPassword())) {
             info.setPassword("");
             info.setConfirmPassword("");
-            return registerError(model, info, "两次密码不一致!");
+            return registerError(model, info, "密码不一致");
         }
-        if (ParamUtil.isNull(info.getEmail())) {
+        if (StringUtil.isNull(info.getEmail())) {
             info.setEmail("");
-            return registerError(model, info, "邮箱不得为空!");
+            return registerError(model, info, "邮箱不可以为空");
         }
-        String token = (String) request.getAttribute(Const.ONLINE_TOKEN_KEY);
-        if (!verificationService.checkVerification(token, info.getVerificationCode())) {
+        if (kaptcha.check(token,info.getVerificationCode())) {
             info.setVerificationCode("");
-            return registerError(model, info, "验证码错误!");
+            return registerError(model, info, "验证码错误");
         }
-        String activeToken = service.tryLockUsername(info.getUsername());
+        String activeToken = service.getGuestsLock(info.getUsername());
         if (activeToken == null) {
-            info.setEmail("");
+            info.setUsername("");
             return registerError(model, info, "该用户名已注册!");
         }
         RegisterInfoDTO dto = new RegisterInfoDTO();
@@ -97,7 +99,7 @@ public class UserController {
     @GetMapping("/test")
     @ResponseBody
     public String test(){
-        service.tryLockUsername("123");
+        service.getGuestsLock("123");
         return "success";
     }
 }

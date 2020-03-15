@@ -1,15 +1,12 @@
 package com.dy.networkdisk.web.controller.user;
 
-import com.dy.networkdisk.api.user.VerificationService;
 import com.dy.networkdisk.web.config.Const;
 import com.dy.networkdisk.web.tool.KaptchaUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -19,9 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class VerificationController {
-
-    @Reference
-    private VerificationService service;
 
     private final KaptchaUtil kaptcha;
 

@@ -5,9 +5,9 @@ import com.dy.networkdisk.web.config.Const;
 import com.dy.networkdisk.web.config.KaptchaKeyInfo;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import java.awt.image.BufferedImage;
@@ -17,39 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class KaptchaUtil {
     private final static SecureRandom R = new SecureRandom();
 
-    private StringRedisTemplate template;
+    private final StringRedisTemplate template;
+    private final ConfigUtil config;
 
-    @Value("${QYDisk.config.cache.enable}")
-    private boolean allowCache;
-
-    @Value("${QYDisk.config.cache.expire}")
-    private long cacheExpire;
-
-
-    private DefaultKaptcha kaptcha;
-    private Properties properties;
-    private long cachedTimestamp;
-
-    private static class Setting{
-        private static String charset;
-        private static int length;
-        private static boolean ignoreCase;
-        private static long expire;
-    }
-
-    @Autowired
-    public KaptchaUtil(StringRedisTemplate template){
-        this.template = template;
-        this.properties = new Properties();
-        this.kaptcha = new DefaultKaptcha();
-        //固定设置
-        properties.setProperty("kaptcha.image.width", "70");
-        properties.setProperty("kaptcha.image.height", "25");
-        load();
-    }
+    private DefaultKaptcha kaptcha = new DefaultKaptcha();
 
     /**
      * 产生随机字符串(优化)并存入redis
@@ -57,14 +32,16 @@ public class KaptchaUtil {
      * @return 验证码字符串
      */
     public String createText(String token){
-        checkExpire();
-        StringBuilder buff = new StringBuilder(Setting.length);
-        for (int i = 0; i < Setting.length; i++){
-            buff.append(Setting.charset.charAt(R.nextInt(Setting.charset.length())));
+        String charset = config.getString(ConfigRedisKey.WEB_VERIFICATION_CHARSET,Const.VERIFICATION_CHINESE);
+        Integer length = config.getInteger(ConfigRedisKey.WEB_VERIFICATION_LENGTH,2);
+        Long expire = config.getLong(ConfigRedisKey.WEB_VERIFICATION_EXPIRE,5L);
+        StringBuilder buff = new StringBuilder(length);
+        for (int i = 0; i < length; i++){
+            buff.append(charset.charAt(R.nextInt(charset.length())));
         }
         String answer = buff.toString();
         String key = Const.FUNC_VERIFICATION_REDIS_KEY + "::" + token;
-        template.opsForValue().set(key,answer,Setting.expire,TimeUnit.MINUTES);
+        template.opsForValue().set(key,answer,expire,TimeUnit.MINUTES);
         return answer;
     }
 
@@ -74,8 +51,7 @@ public class KaptchaUtil {
      * @return 验证码图片
      */
     public BufferedImage createImage(String text){
-        checkExpire();
-        return kaptcha.createImage(text);
+        return getKaptcha().createImage(text);
     }
 
     /**
@@ -85,73 +61,35 @@ public class KaptchaUtil {
      * @return 判断结果
      */
     public boolean check(String token,String code){
+        Boolean ignoreCase = config.getBoolean(ConfigRedisKey.WEB_VERIFICATION_CASE_IGNORE,false);
         String key = Const.FUNC_VERIFICATION_REDIS_KEY + "::" + token;
         String answer = template.opsForValue().get(key);
         if (answer == null){
             return false;
         }
-        if (Setting.ignoreCase){
+        if (ignoreCase){
             return answer.equalsIgnoreCase(code);
         }
         return answer.equals(code);
     }
 
     /**
-     * 判断缓存过期,过期则更新缓存
+     * 组装Kaptcha属性并返回Kaptcha
+     * @return Kaptcha对象
      */
-    private void checkExpire(){
-        if (!allowCache || System.currentTimeMillis() - cachedTimestamp > cacheExpire){
-            load();
-        }
-    }
-
-    /**
-     * 更新缓存
-     */
-    private synchronized void load(){
-        //加载验证码字符集
-        String temp = template.opsForValue().get(ConfigRedisKey.WEB_VERIFICATION_CHARSET);
-        if (temp == null || temp.length() == 0){
-            log.warn("验证码字符集设置错误,默认值:预设中文字符集");
-            Setting.charset = Const.VERIFICATION_CHINESE;
-        } else {
-            Setting.charset = temp;
-        }
-        //加载验证码长度
-        temp = template.opsForValue().get(ConfigRedisKey.WEB_VERIFICATION_LENGTH);
-        try {
-            if (temp == null || temp.length() == 0){
-                throw new Exception();
-            }
-            Setting.length = Integer.parseInt(temp);
-        }catch (Exception e){
-            log.warn("验证码长度设置错误,默认值:2");
-            Setting.length = 2;
-        }
-        //加载忽略大小写设置
-        Setting.ignoreCase = Boolean.parseBoolean(template.opsForValue().get(ConfigRedisKey.WEB_VERIFICATION_CASE_IGNORE));
-        //加载验证码过期时长
-        temp = template.opsForValue().get(ConfigRedisKey.WEB_VERIFICATION_EXPIRE);
-        try {
-            if (temp == null || temp.length() == 0){
-                throw new Exception();
-            }
-            Setting.expire = Long.parseLong(temp);
-        } catch (Exception e){
-            log.warn("验证码有效期设置错误,默认值:5");
-            Setting.expire = 5;
-        }
-        //加载其他kaptcha设置
+    private DefaultKaptcha getKaptcha(){
+        Properties properties = new Properties();
         for (KaptchaKeyInfo it : KaptchaKeyInfo.values()){
-            String value = template.opsForValue().get(it.getRedisKey().getKey());
+            String value = config.getString(it.getRedisKey(),null);
             if (value == null){
                 log.warn("redis中未找到kaptcha属性:" + it.getKaptchaKey());
                 continue;
             }
             properties.setProperty(it.getKaptchaKey(),value);
         }
+        properties.setProperty("kaptcha.image.width", "70");
+        properties.setProperty("kaptcha.image.height", "25");
         kaptcha.setConfig(new Config(properties));
-        //更新缓存时间
-        cachedTimestamp = System.currentTimeMillis();
+        return kaptcha;
     }
 }

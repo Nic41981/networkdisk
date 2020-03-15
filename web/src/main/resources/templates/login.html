@@ -2,13 +2,15 @@
 <html lang="cn" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>登录-青叶网盘</title>
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <title th:text="'登录-' + ${title}"></title>
     <link rel="stylesheet" type="text/css" th:href="'/style/common_style.css'" href="../static/style/common_style.css">
     <link rel="stylesheet" type="text/css" th:href="'/style/login_style.css'" href="../static/style/login_style.css"/>
     <script type="text/javascript" th:src="'/js/jquery-3.4.1.min.js'" src="../static/js/jquery-3.4.1.min.js"></script>
 </head>
 <body>
-    <h1 class="title">青叶网盘</h1>
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <h1 class="title" th:text="${title}"></h1>
     <div class="login_box">
         <h2 class="title2">登录</h2>
         <hr style="color: black"/>

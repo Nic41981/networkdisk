@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final JmsTemplate jmsTemplate;
 
     @Override
-    public String tryLockUsername(String username) {
+    public String getGuestsLock(String username) {
         String token = template.execute((RedisCallback<String>) redisConnection -> {
             //redis尝试对用户名加锁
             String key = Const.FUNC_TEMP_ACCOUNT_LOCK_REDIS_KEY + ":" + username;

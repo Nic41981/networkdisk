@@ -45,6 +45,6 @@ public class Const {
     public static final String TARGET_PATH = "target_path";
 
 
-    /*图形验证码信息*/
+    /*Redis图形验证码信息*/
     public static final String FUNC_VERIFICATION_REDIS_KEY = "QYDisk::web::verification";
 }

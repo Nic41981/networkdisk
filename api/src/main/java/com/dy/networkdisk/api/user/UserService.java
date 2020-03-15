@@ -4,7 +4,7 @@ import com.dy.networkdisk.api.dto.user.RegisterInfoDTO;
 
 public interface UserService {
 
-    String tryLockUsername(String username);
+    String getGuestsLock(String username);
 
     void register(String activeToken,RegisterInfoDTO RegisterInfo);
 
