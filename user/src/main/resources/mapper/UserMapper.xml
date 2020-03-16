@@ -3,6 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dy.networkdisk.user.dao.UserMapper">
+    <select id="init" resultType="java.lang.Integer">
+        select 1;
+    </select>
     <insert id="register">
         insert into user(id, username, password, email) values();
     </insert>

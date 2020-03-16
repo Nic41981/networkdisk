@@ -22,7 +22,7 @@ public enum ConfigPropInfo {
     WEB_VERIFICATION_NOISE_IMPL("web.verification.noise.impl","com.google.code.kaptcha.impl.NoNoise"),
     WEB_VERIFICATION_NOISE_COLOR("web.verification.noise.color","black"),
     WEB_VERIFICATION_STYLE_IMPL("web.verification.style.impl","com.google.code.kaptcha.impl.ShadowGimpy"),
-    WEB_VERIFICATION_BACKGROUND_COLOR_FROM("web.verification.background.color.from","darkGrag"),
+    WEB_VERIFICATION_BACKGROUND_COLOR_FROM("web.verification.background.color.from","darkGray"),
     WEB_VERIFICATION_BACKGROUND_COLOR_TO("web.verification.background.color.to","gray"),
 
     USER_GUESTS_EXPIRE("user.guests.expire","12"),

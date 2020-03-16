@@ -1,6 +1,6 @@
 package com.dy.networkdisk.web.tool
 
-import com.dy.networkdisk.api.dto.user.GuestsDTO
+import com.dy.networkdisk.api.dto.dubbo.user.GuestsDTO
 import com.dy.networkdisk.web.vo.RegisterInfoVo
 import java.util.*
 

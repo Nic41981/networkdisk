@@ -20,6 +20,8 @@ public class PageConfigInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         super.postHandle(request, response, handler, modelAndView);
-        modelAndView.addObject("title",config.getString(ConfigRedisKey.WEB_TITLE,"青叶网盘"));
+        if (modelAndView != null) {
+            modelAndView.addObject("title", config.getString(ConfigRedisKey.WEB_TITLE, "青叶网盘"));
+        }
     }
 }

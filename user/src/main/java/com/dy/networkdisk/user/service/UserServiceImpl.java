@@ -1,8 +1,9 @@
 package com.dy.networkdisk.user.service;
 
 import com.dy.networkdisk.api.config.ConfigRedisKey;
-import com.dy.networkdisk.api.dto.email.AccountActiveDTO;
-import com.dy.networkdisk.api.dto.user.GuestsDTO;
+import com.dy.networkdisk.api.config.QueueConst;
+import com.dy.networkdisk.api.dto.mq.email.AccountActiveDTO;
+import com.dy.networkdisk.api.dto.dubbo.user.GuestsDTO;
 import com.dy.networkdisk.api.user.UserService;
 import com.dy.networkdisk.user.config.Const;
 import com.dy.networkdisk.user.dao.UserMapper;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.jms.core.JmsTemplate;
+
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +33,14 @@ public class UserServiceImpl implements UserService {
     private final JmsTemplate jmsTemplate;
     private final ConfigUtil config;
     private final QueueUtil queue;
+
+    /**
+     * 启动时初始化数据库连接
+     */
+    @PostConstruct
+    private void init(){
+        mapper.init();
+    }
 
     /**
      * 检查重名并给用户名加锁
@@ -66,7 +77,7 @@ public class UserServiceImpl implements UserService {
         AccountActiveDTO dto = BeanTransUtil.trans(guests,new AccountActiveDTO());
         dto.setActiveURL(activeHost + "/user/active");
         String message = GsonTool.toJson(dto);
-        jmsTemplate.convertAndSend(queue.get(QueueUtil.MAIL_ACCOUNT_ACTIVE_QUEUE),message);
+        jmsTemplate.convertAndSend(queue.get(QueueConst.MAIL_ACCOUNT_ACTIVE),message);
     }
 
     @Override

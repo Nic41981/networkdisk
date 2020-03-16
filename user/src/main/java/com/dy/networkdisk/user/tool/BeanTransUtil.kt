@@ -1,7 +1,7 @@
 package com.dy.networkdisk.user.tool
 
-import com.dy.networkdisk.api.dto.email.AccountActiveDTO
-import com.dy.networkdisk.api.dto.user.GuestsDTO
+import com.dy.networkdisk.api.dto.mq.email.AccountActiveDTO
+import com.dy.networkdisk.api.dto.dubbo.user.GuestsDTO
 
 class BeanTransUtil {
     companion object{

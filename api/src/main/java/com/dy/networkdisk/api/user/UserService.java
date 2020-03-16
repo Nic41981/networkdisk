@@ -1,6 +1,6 @@
 package com.dy.networkdisk.api.user;
 
-import com.dy.networkdisk.api.dto.user.GuestsDTO;
+import com.dy.networkdisk.api.dto.dubbo.user.GuestsDTO;
 
 public interface UserService {
 

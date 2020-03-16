@@ -1,17 +1,16 @@
 package com.dy.networkdisk.user.tool;
 
 import org.apache.activemq.command.ActiveMQQueue;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.jms.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class QueueUtil {
 
     private ConcurrentHashMap<String,Queue> queueMap;
-
-    /*激活邮件队列*/
-    public static final String MAIL_ACCOUNT_ACTIVE_QUEUE = "email.account.active";
 
     @PostConstruct
     private void init(){

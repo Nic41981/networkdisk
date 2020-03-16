@@ -18,6 +18,13 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <modules>
+        <module>admin</module>
+        <module>email</module>
+        <module>user</module>
+        <module>web</module>
+    </modules>
+
     <dependencies>
         <!--    api    -->
         <dependency>

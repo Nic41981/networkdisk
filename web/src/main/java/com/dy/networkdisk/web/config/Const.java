@@ -45,5 +45,5 @@ public class Const {
     public static final String ONLINE_TOKEN_KEY = "QYDisk_online";
 
     /*Redis图形验证码信息*/
-    public static final String FUNC_VERIFICATION_REDIS_KEY = "QYDisk::web::verification";
+    public static final String FUNC_VERIFICATION_REDIS_KEY = "QYDisk:web:verification";
 }
