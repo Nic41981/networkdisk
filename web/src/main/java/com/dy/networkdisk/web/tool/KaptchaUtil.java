@@ -87,8 +87,8 @@ public class KaptchaUtil {
             }
             properties.setProperty(it.getKaptchaKey(),value);
         }
-        properties.setProperty("kaptcha.image.width", "70");
-        properties.setProperty("kaptcha.image.height", "25");
+        properties.setProperty("kaptcha.image.width", "100");
+        properties.setProperty("kaptcha.image.height", "30");
         kaptcha.setConfig(new Config(properties));
         return kaptcha;
     }

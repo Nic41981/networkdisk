@@ -4,79 +4,102 @@
     <meta charset="UTF-8">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <title th:text="'注册-' + ${title}">注册-青叶网盘</title>
-    <link rel="stylesheet" th:href="'/style/common_style.css'" href="../static/style/common_style.css">
-    <link rel="stylesheet" th:href="'/style/register_style.css'" href="../static/style/register_style.css">
-    <script type="text/javascript" th:src="'/js/jquery-3.4.1.min.js'" src="../static/js/jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/common_style.css"
+          th:href="'/style/common_style.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/register_style.css"
+          th:href="'/style/register_style.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/easyui/themes/default/easyui.css"
+          th:href="'/easyui/themes/default/easyui.css'"/>
+    <script type="text/javascript"
+            src="../static/js/jquery-3.4.1.min.js"
+            th:src="'/js/jquery-3.4.1.min.js'" >
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/jquery.easyui.min.js"
+            th:src="'/easyui/jquery.easyui.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="'/easyui/locale/easyui-lang-zh_CN.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/js/register.js"
+            th:src="'/js/register.js'" >
+    </script>
 </head>
 <body>
-<!--/*@thymesVar id="title" type="java.lang.String"*/-->
-<h1 class="title" th:text="${title}">青叶网盘</h1>
+    <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+    <h1 class="title-big" th:text="${title}">青叶网盘</h1>
     <div class="register_box">
-        <h2 class="title2">注册</h2>
-        <hr style="color: black"/>
-        <form action="/user/register" method="post">
-            <table class="register_table">
-                <tr>
-                    <td class="td1">
-                        <label for="user_name">用户名:</label>
-                    </td>
-                    <td class="td2">
-                        <input id="user_name" name="username" type="text" th:value="${info!=null?info.username:''}" style="width: 150px" maxlength="20"/>
-                    </td>
-                    <td class="td1">
-                        <a class="small_text" href="/user/login">登录已有账户</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td1">
-                        <label for="password">密码:</label>
-                    </td>
-                    <td class="td2">
-                        <input id="password" name="password" type="password" th:value="${info!=null?info.password:''}" style="width: 150px" maxlength="20">
-                    </td>
-                    <td class="td1"></td>
-                </tr>
-                <tr>
-                    <td class="td1">
-                        <label for="confirm_password">确认密码:</label>
-                    </td>
-                    <td class="td2">
-                        <input id="confirm_password" name="confirmPassword" type="password" th:value="${info!=null?info.confirmPassword:''}" style="width: 150px" maxlength="20">
-                    </td>
-                    <td class="td1"></td>
-                </tr>
-                <tr>
-                    <td class="td1">
-                        <label for="email">邮箱:</label>
-                    </td>
-                    <td>
-                        <input id="email" name="email" type="email" th:value="${info!=null?info.email:''}" style="width: 150px" maxlength="60">
-                    </td>
-                </tr>
-                <tr>
-                    <td class="td1">
-                        <label for="vc_code">验证码:</label>
-                    </td>
-                    <td class="td2">
-                        <input id="vc_code" name="verificationCode" type="text" autocomplete="off" style="width: 50px" maxlength="2"/>
-                        <label for="vc_code" style="vertical-align: middle;float: right">
-                            <img id="vc_img" th:src="'/verification?'" src="../static/image/vc.tmp.jpeg" alt="验证码">
-                        </label>
-                    </td>
-                    <td class="td1 small_text">点击图片刷新</td>
-                </tr>
-                <tr th:if="${result} != null">
-                    <td class="td1"></td>
-                    <td class="td2 small_text result" th:text="${result}"></td>
-                </tr>
-                <tr>
-                    <td colspan="3">
-                        <button id="register_btn" class="register_btn">注册</button>
-                    </td>
-                </tr>
-            </table>
-        </form>
+        <div class="easyui-panel">
+            <header class="register-box-header">注册</header>
+            <form id="register-form" action="/user/register" method="post">
+                <table class="register-box-table">
+                    <tr>
+                        <td>
+                            <input id="input-username"
+                                   class="input-long"
+                                   name="username"
+                                   th:value="${info!=null?info.username:''}"/>
+                        </td>
+                        <td>
+                            <a class="help-link" href="/user/login">
+                                <img id="login-account-btn"
+                                     class="help-icon"
+                                     src="../static/image/help.png"
+                                     alt="登录已有账户"
+                                     th:src="'/image/help.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-password"
+                                   class="input-long"
+                                   name="password"
+                                   th:value="${info!=null?info.password:''}"/>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td id="input-email-box">
+                            <input id="input-email"
+                                   class="input-long"
+                                   name="email"
+                                   th:value="${info!=null?info.email:''}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-verification" class="input-short" maxlength="20"/>
+                            <img id="vc-img"
+                                 class="vc-img"
+                                 src="../static/image/vc.tmp.jpeg"
+                                 alt="验证码"
+                                 th:src="'/verification?'"/>
+                        </td>
+                        <td>
+                            <a class="help-link" href="javascript:void(0)">
+                                <img id="change-vc-btn"
+                                     class="help-icon"
+                                     src="../static/image/help.png"
+                                     alt="换一张"
+                                     th:src="'/image/help.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="register-btn-box">
+                    <a id="register-btn" href="javascript:void(0)" style="width: 250px"></a>
+                </div>
+            </form>
+        </div>
     </div>
-    <script type="text/javascript" th:src="'/js/register.js'" src="../static/js/register.js"></script>
 </body>
 </html>

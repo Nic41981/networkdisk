@@ -9,3 +9,16 @@ body{
 a{color: black}
 a:hover{color: black}
 a:visited{color: black}
+
+.title-big{
+    text-align: center;
+    font-size: 40px;
+    font-family: BoLuoJiang, monospace;
+    margin-top: 50px;
+}
+
+.vc-img{
+    width: 100px;
+    height: 30px;
+    margin: -10px 5px;
+}

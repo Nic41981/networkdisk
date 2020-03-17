@@ -4,105 +4,103 @@
     <meta charset="UTF-8">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <title th:text="'登录-' + ${title}">登录-青叶网盘</title>
-    <link rel="stylesheet" type="text/css" th:href="'/style/common_style.css'" href="../static/style/common_style.css">
-<!--    <link rel="stylesheet" type="text/css" th:href="'/style/login_style.css'" href="../static/style/login_style.css"/>-->
-    <link rel="stylesheet" type="text/css" th:href="'/easyui/themes/default/easyui.css'" href="../static/easyui/themes/default/easyui.css">
-    <script type="text/javascript" th:src="'/js/jquery-3.4.1.min.js'" src="../static/js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" th:src="'/easyui/jquery.easyui.min.js'" src="../static/easyui/jquery.easyui.min.js"></script>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/common_style.css"
+          th:href="'/style/common_style.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/login_style.css"
+          th:href="'/style/login_style.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/easyui/themes/default/easyui.css"
+          th:href="'/easyui/themes/default/easyui.css'"/>
+    <script type="text/javascript"
+            src="../static/js/jquery-3.4.1.min.js"
+            th:src="'/js/jquery-3.4.1.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/jquery.easyui.min.js"
+            th:src="'/easyui/jquery.easyui.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="'/easyui/locale/easyui-lang-zh_CN.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/js/login.js"
+            th:src="'/js/login.js'" >
+    </script>
 </head>
 <body>
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
-    <h1 class="title" th:text="${title}">青叶网盘</h1>
-    <div style="margin: 0 auto;width: 100%;max-width: 600px">
+    <h1 class="title-big" th:text="${title}">青叶网盘</h1>
+    <div class="login-box">
         <div class="easyui-panel">
-            <header align="center"><b>登录</b></header>
-            <form action="/user/login" method="post">
-                <div style="margin: 10px auto;width: 100%;max-width: 250px;text-align: left">
-                    <input class="easyui-textbox" prompt="用户名" style="width: 100%;max-width: 250px">
-
-                </div>
-                <div style="margin: 10px auto;width: 100%;max-width: 250px;text-align: left">
-                    <input class="easyui-passwordbox" prompt="密码" style="width: 100%;max-width: 250px">
-                </div>
-                <div style="margin: 10px auto;width: 100%;max-width: 250px;text-align: left">
-                    <input class="easyui-textbox" prompt="验证码" style="width: 100%;max-width: 150px">
-                    <img id="vc_img" alt="验证码" src="../static/image/vc.tmp.jpeg" th:src="'/verification?'" style="margin: -7px 0"/>
-                </div>
-                <div style="margin: 10px auto;width: 100%;max-width: 250px;text-align: left">
-                    <input id="auto_login" class="easyui-checkbox" name="fruit" value="Banana" label="自动登录" labelPosition="after"/>
-                </div>
-                <div style="text-align: center;padding: 10px">
-                    <a class="easyui-linkbutton" href="javascript:void(0)" style="width: 250px">登录</a>
+            <header class="login-box-header">登录</header>
+            <form id="login-form" action="/user/login" method="post">
+                <table class="login-box-table">
+                    <tr>
+                        <td>
+                            <input id="input-username" class="input-long" maxlength="20"/>
+                        </td>
+                        <td>
+                            <a class="help-link" href="/user/register" th:if="${allow_register}">
+                                <img id="create-account-btn"
+                                     class="help-icon"
+                                     src="../static/image/help.png"
+                                     alt="注册新用户"
+                                     th:src="'/image/help.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-password" class="input-long" maxlength="20"/>
+                        </td>
+                        <td>
+                            <a class="help-link" href="#">
+                                <img id="forget-password-btn"
+                                     class="help-icon"
+                                     src="../static/image/help.png"
+                                     alt="找回密码"
+                                     th:src="'/image/help.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-verification" class="input-short" maxlength="20"/>
+                            <img id="vc-img"
+                                 class="vc-img"
+                                 src="../static/image/vc.tmp.jpeg"
+                                 alt="验证码"
+                                 th:src="'/verification?'"/>
+                        </td>
+                        <td>
+                            <a class="help-link" href="javascript:void(0)">
+                                <img id="change-vc-btn"
+                                     class="help-icon"
+                                     src="../static/image/help.png"
+                                     alt="换一张"
+                                     th:src="'/image/help.png'"/>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div>
+                                <input id="input-auto-login"/>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="login-btn-box">
+                    <a id="login-btn" href="javascript:void(0)" style="width: 250px"></a>
                 </div>
             </form>
         </div>
     </div>
-    <script type="text/javascript" th:src="'/js/login.js'" src="../static/js/login.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-<!--    <div class="login_box">-->
-<!--        <h2 class="title2">登录</h2>-->
-<!--        <hr style="color: black"/>-->
-<!--            <form action="/user/login" method="post">-->
-<!--                <table class="login_table">-->
-<!--                    <tr>-->
-<!--                        <td class="td1">-->
-<!--                            <label for="user_name">用户名:</label>-->
-<!--                        </td>-->
-<!--                        <td class="td2">-->
-<!--                            <input id="user_name" type="text" style="width: 150px" maxlength="20"/>-->
-<!--                        </td>-->
-<!--                        <td class="td1">-->
-<!--                            <a class="small_text" href="/user/register" th:if="${allow_register}">注册新用户</a>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td class="td1">-->
-<!--                            <label for="password">密码:</label>-->
-<!--                        </td>-->
-<!--                        <td class="td2">-->
-<!--                            <input id="password" type="password" style="width: 150px" maxlength="20"/>-->
-<!--                        </td>-->
-<!--                        <td class="td1">-->
-<!--                            <a class="small_text" href="#">忘记密码?</a>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td class="td1">-->
-<!--                            <label for="vc_code">验证码:</label>-->
-<!--                        </td>-->
-<!--                        <td class="td2">-->
-<!--                            <input id="vc_code" type="text" autocomplete="off" style="width: 50px" maxlength="2"/>-->
-<!--                            <label for="vc_code" style="vertical-align: middle;float: right">-->
-<!--                                <img id="vc_img" alt="验证码" src="../static/image/vc.tmp.jpeg" th:src="'/verification?'"/>-->
-<!--                            </label>-->
-<!--                        </td>-->
-<!--                        <td class="td1 small_text">点击图片刷新</td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td class="td1"></td>-->
-<!--                        <td class="td2">-->
-<!--                            <input id="auto_login" type="checkbox">-->
-<!--                            <label for="auto_login" class="small_text">下次自动登录</label>-->
-<!--                        </td>-->
-<!--                        <td class="td1"></td>-->
-<!--                    </tr>-->
-<!--                    <tr th:if="${result} != null">-->
-<!--                        <td class="td1"></td>-->
-<!--                        <td class="td2 small_text result" th:text="${result}"></td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <td colspan="3">-->
-<!--                            <button class="login_btn">登录</button>-->
-<!--                        </td>-->
-<!--                    </tr>-->
-<!--                </table>-->
-<!--            </form>-->

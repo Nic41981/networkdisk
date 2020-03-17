@@ -44,8 +44,10 @@ public class UserController {
     }
 
     @GetMapping("/user/register")
-    public String getRegisterPage(){
-        return "register";
+    public ModelAndView getRegisterPage(ModelAndView model){
+        model.setViewName("register");
+        model.addObject("create_check",false);
+        return model;
     }
 
     @PostMapping("/user/register")
@@ -54,25 +56,19 @@ public class UserController {
         String ip = (String) request.getAttribute(Const.IP_KEY);
         if (StringUtil.isNull(info.getUsername()) || !StringUtil.inLengthRange(info.getUsername(),2,20)) {
             info.setUsername("");
-            return registerError(model, info, "用户名长度不正确（2-20）");
+            return registerError(model, info, "用户名长度不正确！");
         }
         if (!info.getUsername().matches("^[\\w\\u4e00-\\u9fa5]+$")) {
             info.setUsername("");
-            return registerError(model, info, "用户名包含非法字符（数字、字母、下划线和汉字）");
+            return registerError(model, info, "用户名包含非法字符！");
         }
         if (StringUtil.isNull(info.getPassword()) || !StringUtil.inLengthRange(info.getPassword(),5,20)) {
             info.setPassword("");
-            info.setConfirmPassword("");
-            return registerError(model, info, "密码长度不正确（5-20）");
-        }
-        if (!info.getPassword().equals(info.getConfirmPassword())) {
-            info.setPassword("");
-            info.setConfirmPassword("");
-            return registerError(model, info, "密码不一致");
+            return registerError(model, info, "密码长度不正确！");
         }
         if (StringUtil.isNull(info.getEmail())) {
             info.setEmail("");
-            return registerError(model, info, "邮箱不可以为空");
+            return registerError(model, info, "邮箱长度不正确！");
         }
         if (kaptcha.check(token,info.getVerificationCode())) {
             info.setVerificationCode("");
