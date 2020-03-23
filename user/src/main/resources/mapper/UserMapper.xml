@@ -3,13 +3,15 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dy.networkdisk.user.dao.UserMapper">
+    <insert id="register">
+        insert into 
+        user (id, email, nickname, password, inviterID, registerTime, registerIP, activeTime, activeIP, state)
+        values (#{po.id},#{po.email},#{po.nickname},#{po.password},#{po.inviterID},#{po.registerTime},#{po.registerIP},#{po.activeTime},#{po.activeIP},#{po.state});
+    </insert>
     <select id="init" resultType="java.lang.Integer">
         select 1;
     </select>
-    <insert id="register">
-        insert into user(id, username, password, email) values();
-    </insert>
-    <select id="checkUsernameExist" parameterType="string" resultType="int">
-        select count(1) from user where username = #{username} and state = 0;
+    <select id="checkEmailExist" parameterType="string" resultType="int">
+        select count(1) from user where email = #{email} and state = 0;
     </select>
 </mapper>
