@@ -9,16 +9,45 @@
     </style>
 </head>
 <body>
-    <p>亲爱的<u><i th:text="${username}">用户</i></u>:</p>
+    <p>亲爱的<u><i th:text="${user.nickname}">用户</i></u>:</p>
     <p style="text-indent: 2em">
         感谢您注册青叶网盘，您的注册信息如下：
     </p>
     <ul style="padding-left: 4em">
-        <li>用户名：<b th:text="${username}">用户</b></li>
-        <li>用户类型：<b>普通用户</b></li>
-        <li>绑定邮箱：<b th:text="${email}">test@QYDisk.com</b></li>
-        <li>注册时间：<b th:text="${#dates.format(register_time,'yyyy年MM月dd日 HH时mm分')}">2020年02月04日 00时00分</b></li>
-        <li>注册IP：<b th:text="${register_ip}"></b></li>
+        <li>注册邮箱：
+            <b th:text="${user.email}">
+                test@QYDisk.com
+            </b>
+        </li>
+        <li>
+            昵称：
+            <b th:text="${user.nickname}">
+                用户
+            </b>
+        </li>
+        <li>
+            用户类型：
+            <b>
+                普通用户
+            </b>
+        </li>
+        <li>注册时间：
+            <b th:text="${#dates.format(user.registerTime,'yyyy年MM月dd日 HH时mm分')}">
+                2020年02月04日 00时00分
+            </b>
+        </li>
+        <li>
+            注册IP：
+            <b th:text="${user.registerIP}">
+                未知
+            </b>
+        </li>
+        <li>
+            注册地点：
+            <b th:text="${user.registerIPLocation}">
+                未知
+            </b>
+        </li>
     </ul>
     <p style="text-indent: 2em">
         为了方便您使用和密码找回，请点击下方按钮激活您的账户。
@@ -29,9 +58,9 @@
     <p style="text-indent: 2em">
         希望您在青叶网盘的使用过程中有一个愉快的体验。
     </p>
-    <form th:action="${activeURL}" method="post">
-        <input type="hidden" name="username" th:value="${username}">
-        <input type="hidden" name="token" th:value="${token}">
+    <form th:action="${user.activeURL}" method="post">
+        <input type="hidden" name="email" th:value="${user.email}">
+        <input type="hidden" name="lock" th:value="${user.lock}">
         <button style="width: 100%;height: 40px;font-size: 20px;background-color: lightgreen;margin: 10px auto 20px">
             <b>激活账户</b>
         </button>

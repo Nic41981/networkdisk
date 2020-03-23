@@ -6,10 +6,11 @@ import org.springframework.jms.annotation.EnableJms;
 
 @SpringBootApplication
 @EnableJms
-public class EmailApplication {
-
-    public static void main(String[] args) {
-        SpringApplication.run(EmailApplication.class, args);
+open class EmailApplication {
+    companion object{
+        @JvmStatic
+        fun main(args: Array<String>) {
+            SpringApplication.run(EmailApplication::class.java, *args)
+        }
     }
-
 }
