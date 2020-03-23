@@ -1,12 +1,8 @@
-package com.dy.networkdisk.web.config;
+package com.dy.networkdisk.web.config
 
-import com.dy.networkdisk.api.config.ConfigRedisKey;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.dy.networkdisk.api.config.ConfigRedisKey
 
-@Getter
-@AllArgsConstructor
-public enum KaptchaKeyInfo {
+enum class KaptchaKeyInfo(val kaptchaKey: String, val redisKey: ConfigRedisKey) {
     BORDER("kaptcha.border",ConfigRedisKey.WEB_VERIFICATION_BORDER),
     BORDER_COLOR("kaptcha.border.color",ConfigRedisKey.WEB_VERIFICATION_BORDER_COLOR),
     BORDER_WIDTH("kaptcha.border.thickness",ConfigRedisKey.WEB_VERIFICATION_BORDER_WIDTH),
@@ -18,7 +14,4 @@ public enum KaptchaKeyInfo {
     STYLE_IMPL("kaptcha.obscurificator.impl",ConfigRedisKey.WEB_VERIFICATION_STYLE_IMPL),
     BACKGROUND_COLOR_FROM("kaptcha.background.clear.from",ConfigRedisKey.WEB_VERIFICATION_BACKGROUND_COLOR_FROM),
     BACKGROUND_COLOR_TO("kaptcha.background.clear.to",ConfigRedisKey.WEB_VERIFICATION_BACKGROUND_COLOR_TO);
-
-    private String kaptchaKey;
-    private ConfigRedisKey redisKey;
 }
