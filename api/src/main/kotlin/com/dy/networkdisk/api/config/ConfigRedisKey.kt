@@ -1,13 +1,9 @@
 package com.dy.networkdisk.api.config;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public enum ConfigRedisKey {
+enum class ConfigRedisKey(val key:String) {
     WEB_TITLE("QYDisk:config:web:title"),
-    WEB_ALLOW_REGISTER("QYDisk:config:web:register:allow"),
+    WEB_REGISTER_ALLOW("QYDisk:config:web:register:allow"),
+    WEB_REGISTER_ONLY_INVITE("QYDisk:config:web:register:onlyInvite"),
 
     WEB_VERIFICATION_CHARSET("QYDisk:config:web:verification:charset"),
     WEB_VERIFICATION_EXPIRE("QYDisk:config:web:verification:expire"),
@@ -26,9 +22,6 @@ public enum ConfigRedisKey {
     WEB_VERIFICATION_BACKGROUND_COLOR_TO("QYDisk:config:web:verification:background:color:to"),
 
     USER_GUESTS_EXPIRE("QYDisk:config:user:guests:expire"),
-    USER_GUESTS_ACTIVE_HOST("QYDisk:config:user:guests:active:host"),
 
     MAIL_SIGNATURE("QYDisk:config:mail:signature");
-
-    private String key;
 }
