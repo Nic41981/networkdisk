@@ -1,0 +1,16 @@
+.message-box{
+    margin: 0 auto;
+    width: 600px;
+}
+.message-box-header{
+    text-align: center;
+    font-weight: bold;
+}
+.message-inner-box{
+    width: 400px;
+    margin: 0 auto;
+}
+.message-inner-box p{
+    text-indent: 2em;
+    text-align: left;
+}

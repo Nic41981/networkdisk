@@ -43,10 +43,9 @@
                 <table class="register-box-table">
                     <tr>
                         <td>
-                            <input id="input-username"
+                            <input id="input-email"
                                    class="input-long"
-                                   name="username"
-                                   th:value="${info!=null?info.username:''}"/>
+                                   name="email"/>
                         </td>
                         <td>
                             <a class="help-link" href="/user/login">
@@ -60,24 +59,30 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="input-password"
+                            <input id="input-nickname"
                                    class="input-long"
-                                   name="password"
-                                   th:value="${info!=null?info.password:''}"/>
-                        </td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td id="input-email-box">
-                            <input id="input-email"
-                                   class="input-long"
-                                   name="email"
-                                   th:value="${info!=null?info.email:''}"/>
+                                   name="nickname"/>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input id="input-verification" class="input-short" maxlength="20"/>
+                            <input id="input-password"
+                                   class="input-long"
+                                   name="password"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-invitation"
+                                   class="input-long"
+                                   name="invitationCode"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="input-verification"
+                                   class="input-short"
+                                   name="verificationCode"/>
                             <img id="vc-img"
                                  class="vc-img"
                                  src="../static/image/vc.tmp.jpeg"

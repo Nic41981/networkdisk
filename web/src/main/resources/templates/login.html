@@ -43,9 +43,10 @@
                 <table class="login-box-table">
                     <tr>
                         <td>
-                            <input id="input-username" class="input-long" maxlength="20"/>
+                            <input id="input-email" class="input-long" maxlength="20"/>
                         </td>
                         <td>
+                            <!--/*@thymesVar id="allow_register" type="java.lang.Boolean"*/-->
                             <a class="help-link" href="/user/register" th:if="${allow_register}">
                                 <img id="create-account-btn"
                                      class="help-icon"
@@ -102,5 +103,9 @@
             </form>
         </div>
     </div>
+    <!--/*@thymesVar id="result" type="java.lang.String"*/-->
+    <script type="text/javascript" th:if="${result} != null" th:inline="javascript">
+        $.messager.alert('[[${result_title}]]','[[${result}]]','[[${result_type}]]')
+    </script>
 </body>
 </html>
