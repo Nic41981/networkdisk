@@ -9,6 +9,5 @@ data class GuestsBO (
     var inviterID: Long = 0L,
     var registerTime: Date = Date(),
     var registerIP: String = "",
-    var registerIPLocation: String = "",
-    var lock: String = ""
+    var registerIPLocation: String = ""
 )

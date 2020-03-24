@@ -2,14 +2,24 @@ package com.dy.networkdisk.user.config;
 
 class Const {
     companion object {
-        const val USER_STATUS_NORMAL = 0;
-        const val USER_STATUS_DELETE = -1;
-        const val USER_STATUS_LOCKED = 1;
+        //用户状态
+        const val USER_STATUS_NORMAL = 0
+        const val USER_STATUS_DELETE = 1
 
+        //用户类型
+        const val USER_TYPE_ROOT = "root"
+        const val USER_TYPE_ADMIN = "admin"
+        const val USER_TYPE_NORMAL = "normal"
+        const val USER_TYPE_GUESTS = "guests"
+        const val USER_TYPE_UNKNOWN = "unknown"
 
-        /*临时(未激活)账号信息*/
-        const val FUNC_GUESTS_REDIS_KEY = "QYDisk:user:guests";
-        /*临时(未激活)账号用户名锁(邮件激活token)*/
-        const val FUNC_GUESTS_LOCK_REDIS_KEY = "QYDisk:user:guests:lock";
+        /*游客账号信息*/
+        const val FUNC_GUESTS_REDIS_KEY = "QYDisk:user:guests"
+
+        /*用户登录和会话信息*/
+        const val FUNC_USER_ONLINE_REDIS_KEY = "QYDisk:user:online"
+
+        /*用户封禁信息*/
+        const val FUNC_USER_LOCK_REDIS_KEY = "QYDisk:user:lock"
     }
  }

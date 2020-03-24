@@ -1,10 +1,11 @@
 package com.dy.networkdisk.api.user
 
 import com.dy.networkdisk.api.dto.dubbo.user.LoginDTO
+import com.dy.networkdisk.api.dto.dubbo.user.LoginResult
 
 interface UserLoginService {
 
-    fun isGuests(email: String): Boolean
+    fun getUserType(email: String): String
 
-    fun login(dto: LoginDTO):Boolean
+    fun login(dto: LoginDTO): LoginResult
 }

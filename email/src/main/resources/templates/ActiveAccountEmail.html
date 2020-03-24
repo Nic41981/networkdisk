@@ -9,7 +9,8 @@
     </style>
 </head>
 <body>
-    <p>亲爱的<u><i th:text="${user.nickname}">用户</i></u>:</p>
+    <p>亲爱的<u>
+    <i th:text="${user.nickname}">用户</i></u>:</p>
     <p style="text-indent: 2em">
         感谢您注册青叶网盘，您的注册信息如下：
     </p>
@@ -50,7 +51,7 @@
         </li>
     </ul>
     <p style="text-indent: 2em">
-        为了方便您使用和密码找回，请点击下方按钮激活您的账户。
+        为了方便您使用和密码找回，请点击下方链接激活您的账户。
     </p>
     <p style="text-indent: 2em">
         如果该账户不是您注册的，请勿点击激活，以免给您造成不必要的损失。
@@ -58,13 +59,9 @@
     <p style="text-indent: 2em">
         希望您在青叶网盘的使用过程中有一个愉快的体验。
     </p>
-    <form th:action="${user.activeURL}" method="post">
-        <input type="hidden" name="email" th:value="${user.email}">
-        <input type="hidden" name="lock" th:value="${user.lock}">
-        <button style="width: 100%;height: 40px;font-size: 20px;background-color: lightgreen;margin: 10px auto 20px">
-            <b>激活账户</b>
-        </button>
-    </form>
+    <a th:href="${user.activeURL} + '?email=' + ${user.email} + '&lock=' + ${user.lock}">
+        激活账户
+    </a>
     <div style="float: right;text-align: center">
         <i>青叶网盘</i>
         <p style="margin: 0 auto" th:text="${#dates.format(create_time,'yyyy年MM月dd日')}">2020年02月04日<p>

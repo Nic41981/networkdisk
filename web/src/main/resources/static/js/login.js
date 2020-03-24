@@ -1,4 +1,8 @@
 $(function () {
+    $("#login-form").form({
+        novalidate: true,
+        ajax: false
+    });
     //输入框
     $("#input-email").textbox({
         prompt: "邮箱",

@@ -4,6 +4,7 @@ enum class ConfigRedisKey(val key:String) {
     WEB_TITLE("QYDisk:config:web:title"),
     WEB_REGISTER_ALLOW("QYDisk:config:web:register:allow"),
     WEB_REGISTER_ONLY_INVITE("QYDisk:config:web:register:onlyInvite"),
+    WEB_LOGIN_LIMIT("QYDisk:config:web:login:limit"),
 
     WEB_VERIFICATION_CHARSET("QYDisk:config:web:verification:charset"),
     WEB_VERIFICATION_EXPIRE("QYDisk:config:web:verification:expire"),

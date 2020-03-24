@@ -4,6 +4,7 @@ enum class ConfigPropInfo(val key: String,val default: String) {
     WEB_TITLE("web.title", "青叶网盘"),
     WEB_REGISTER_ALLOW("web.register.allow", "true"),
     WEB_REGISTER_ONLY_INVITE("web.register.onlyInvite","false"),
+    WEB_LOGIN_LIMIT("web.login.limit","false"),
 
     WEB_VERIFICATION_CHARSET("web.verification.charset", Const.DEFAULT_VERIFICATION_CHARSET),
     WEB_VERIFICATION_EXPIRE("web.verification.expire","10"),

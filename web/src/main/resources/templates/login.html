@@ -43,10 +43,9 @@
                 <table class="login-box-table">
                     <tr>
                         <td>
-                            <input id="input-email" class="input-long" maxlength="20"/>
+                            <input id="input-email" name="email" class="input-long" maxlength="20"/>
                         </td>
                         <td>
-                            <!--/*@thymesVar id="allow_register" type="java.lang.Boolean"*/-->
                             <a class="help-link" href="/user/register" th:if="${allow_register}">
                                 <img id="create-account-btn"
                                      class="help-icon"
@@ -58,7 +57,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="input-password" class="input-long" maxlength="20"/>
+                            <input id="input-password" name="password" class="input-long" maxlength="20"/>
                         </td>
                         <td>
                             <a class="help-link" href="#">
@@ -72,7 +71,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <input id="input-verification" class="input-short" maxlength="20"/>
+                            <input id="input-verification" name="verificationCode" class="input-short" maxlength="20"/>
                             <img id="vc-img"
                                  class="vc-img"
                                  src="../static/image/vc.tmp.jpeg"
@@ -92,7 +91,7 @@
                     <tr>
                         <td colspan="2">
                             <div>
-                                <input id="input-auto-login"/>
+                                <input id="input-auto-login" name="autoLogin" value="true"/>
                             </div>
                         </td>
                     </tr>
@@ -103,9 +102,8 @@
             </form>
         </div>
     </div>
-    <!--/*@thymesVar id="result" type="java.lang.String"*/-->
     <script type="text/javascript" th:if="${result} != null" th:inline="javascript">
-        $.messager.alert('[[${result_title}]]','[[${result}]]','[[${result_type}]]')
+        $.messager.alert('登录失败',[[${result.content}]],[[${result.type}]])
     </script>
 </body>
 </html>

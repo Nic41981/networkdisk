@@ -1,14 +1,17 @@
 package com.dy.networkdisk.web.controller.user
 
 import com.dy.networkdisk.api.config.ConfigRedisKey
+import com.dy.networkdisk.api.dto.dubbo.user.LoginDTO
 import com.dy.networkdisk.api.user.UserLoginService
 import com.dy.networkdisk.web.config.Const
 import com.dy.networkdisk.web.tool.*
 import com.dy.networkdisk.web.vo.LoginVO
 import com.dy.networkdisk.web.vo.MessagePageVO
+import com.dy.networkdisk.web.vo.ResultPageVO
 import org.apache.dubbo.config.annotation.Reference
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,7 +19,7 @@ import org.springframework.web.servlet.ModelAndView
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
-@Component
+@Controller
 @RequestMapping("/user")
 class LoginController @Autowired constructor(
         private val config: ConfigUtil,
@@ -40,9 +43,7 @@ class LoginController @Autowired constructor(
         val token = request.getAttribute(Const.ONLINE_TOKEN_KEY) as String
         val ipLocation = IPLocation(ip)
         //参数检查
-        val result = vo.run {
-            return@run kaptcha.check(token,vo.verificationCode)
-        }
+        val result = kaptcha.check(token,vo.verificationCode)
         if (!result){
             return model.apply {
                 viewName = "message"
@@ -55,14 +56,55 @@ class LoginController @Autowired constructor(
                 addObject("message",message)
             }
         }
-        if (service.isGuests(vo.email)){
+        val userType = service.getUserType(vo.email)
+        //账户不存在
+        if ("unknown" == userType){
             return model.apply {
                 viewName = "login"
-                addObject("result_title",Const.INFO_MSG_TYPE)
-                addObject("result","很抱歉，您的账号未激活，游客账户无法登陆。")
-                addObject("result_type","info")
+                addObject("result",ResultPageVO().apply {
+                    content = "用户名或密码错误！"
+                    type = "warning"
+                })
             }
         }
-        return model
+        //游客账户
+        if ("guests" == userType){
+            return model.apply {
+                viewName = "login"
+                addObject("result",ResultPageVO().apply {
+                    content = "抱歉，您的账号未激活，游客账户无法登陆。"
+                    type = "info"
+                })
+            }
+        }
+        //服务器限制登录
+        val loginLimit = config.getBoolean(ConfigRedisKey.WEB_LOGIN_LIMIT,false)
+        if (loginLimit && "normal" == userType) {
+            return model.apply {
+                viewName = "login"
+                addObject("result", ResultPageVO().apply {
+                    content = "服务器维护中，请稍后再试。"
+                    type = "info"
+                })
+            }
+        }
+        val dto = LoginDTO().apply {
+            this.token = token
+            this.email = vo.email
+            this.password = vo.password
+            this.ip = ipLocation.ip
+            this.ipLocation = ipLocation.getLocation()
+        }
+        val loginResult = service.login(dto)
+        if (loginResult.isSuccess){
+            //TODO 跳转主页
+        }
+        return model.apply {
+            viewName = "login"
+            addObject("result", ResultPageVO().apply {
+                content = loginResult.content
+                type = loginResult.type
+            })
+        }
     }
 }
