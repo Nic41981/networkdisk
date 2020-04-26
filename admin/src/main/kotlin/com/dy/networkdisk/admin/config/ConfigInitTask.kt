@@ -1,6 +1,7 @@
 package com.dy.networkdisk.admin.config
 
-import com.dy.networkdisk.api.config.ConfigRedisKey
+import com.dy.networkdisk.api.config.ConfigInfo
+import kotlinx.coroutines.GlobalScope
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -13,57 +14,53 @@ import java.util.*
 
 @Configuration
 open class ConfigInitTask @Autowired constructor(
-        val template: StringRedisTemplate
+        private val template: StringRedisTemplate
 ): ApplicationRunner {
 
     override fun run(args: ApplicationArguments?) {
         val configFile = File(Const.CONFIG_PATH)
-        val hasConfig: Boolean = checkConfigFile(configFile)
         val properties = Properties()
-        if (hasConfig) {
-            //存在配置文件
-            try {
-                FileInputStream(configFile).use { fis -> properties.load(fis) }
-            } catch (e: Exception) {
-                println("配置文件读取失败,将使用默认配置启动!")
+        try {
+            if (!configFile.exists()) {
+                throw Exception()
             }
+            FileInputStream(configFile).use {
+                properties.load(it)
+            }
+        } catch (e: Exception) {
+            //文件不存在或读取异常
+            println("配置文件读取失败,将使用默认配置启动!")
+            properties.clear()
+            for (it in ConfigInfo.values()) {
+                properties.setProperty(it.propKey, it.default)
+            }
+            createFile(configFile,properties)
         }
-        for (it in ConfigPropInfo.values()) {
+        for (it in ConfigInfo.values()) {
             try {
-                val value = properties.getProperty(it.key, it.default)
-                val key = ConfigRedisKey.valueOf(it.name).key
-                template.opsForValue()[key] = value
+                template.opsForValue()[it.redisKey] = properties.getProperty(it.propKey, it.default)
             } catch (e: Exception) {
                 println("缺少Redis核心键值信息,请检查api模块版本!")
             }
         }
     }
 
-    /**
-     * 判断配置文件是否存在,若不存在则尝试创建默认配置文件
-     * @param configFile 配置文件信息
-     * @return 配置文件是否存在
-     */
-    private fun checkConfigFile(configFile: File): Boolean {
-        if (configFile.exists()) {
-            return true
+    private fun createFile(configFile: File, properties: Properties){
+        if (configFile.exists() && !configFile.delete()){
+            println("旧配置文件删除失败")
+            return
         }
-        try {
-            val parent = configFile.parentFile
-            if (!parent.exists() && !parent.mkdirs()) {
-                throw Exception("配置文件夹创建失败")
-            }
-            if (!configFile.createNewFile()) {
-                throw Exception("配置文件创建失败")
-            }
-            val properties = Properties()
-            for (it in ConfigPropInfo.values()) {
-                properties.setProperty(it.key, it.default)
-            }
-            properties.store(FileOutputStream(configFile), null)
-        } catch (e: Exception) {
-            println("默认配置文件创建失败!")
+        val parent = configFile.parentFile
+        if (!parent.exists() && !parent.mkdirs()) {
+            println("配置文件夹创建失败")
+            return
         }
-        return false
+        if (!configFile.createNewFile()) {
+            println("新配置文件创建失败")
+            return
+        }
+        configFile.outputStream().use {
+            properties.store(it,null)
+        }
     }
 }

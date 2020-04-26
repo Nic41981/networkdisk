@@ -1,7 +1,9 @@
 package com.dy.networkdisk.user.po
 
+import com.dy.networkdisk.api.annotation.NoArg
 import java.util.*
 
+@NoArg
 data class UserPO (
         var id: Long = 0L,
         var email: String = "",

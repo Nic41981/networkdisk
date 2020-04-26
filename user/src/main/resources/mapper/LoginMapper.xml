@@ -4,7 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dy.networkdisk.user.dao.LoginMapper">
     <insert id="insert" parameterType="com.dy.networkdisk.user.po.LoginPO">
-        insert into login (id, userID, loginTime, loginIP, loginIPLocation)
-        values (#{id},#{userID},#{loginTime},#{loginIP},#{loginIPLocation});
+        insert into login (id, userID, loginTime, loginIP, loginIPLocation,type)
+        values (#{id},#{userID},#{loginTime},#{loginIP},#{loginIPLocation},#{type});
     </insert>
+
+    <select id="findLastIPLocationByUserID" parameterType="long" resultType="string">
+        select userID from login where userID = #{userID} order by loginTime desc limit 1;
+    </select>
 </mapper>

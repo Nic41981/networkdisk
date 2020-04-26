@@ -27,13 +27,6 @@ class Const {
                 "夏困刘罪亡鞋健模败伴守挥鲜财孤枪禁恐伙杰迹妹藸遍盖副坦牌江顺秋萨菜划授归浪听凡预奶雄升碃编典袋莱含盛济蒙棋端腿招释介烧误"
 
         /**
-         * 提示类型
-         */
-        const val INFO_MSG_TYPE = "提示"
-        const val WANG_MSG_TYPE = "警告"
-        const val ERROR_MSG_TYPE = "错误"
-
-        /**
          * 用户IP信息主键
          */
         const val IP_KEY = "ip"
@@ -41,14 +34,27 @@ class Const {
         /**
          * 在线Cookie主键
          */
-        const val ONLINE_TOKEN_KEY = "QYDisk_online"
+        const val SESSION_KEY = "QYDisk_session"
+
+        /**
+         * 用户自动登录主键
+         */
+        const val AUTOLOGIN_KEY = "QYDisk_auto_login"
 
         /**
          * 重定向目标信息
          */
         const val REDIRECT_TARGET = "target"
 
+        /**
+         * 用户ID
+         */
+        const val USER_ID = "user_id"
+
         /*Redis图形验证码信息*/
         const val FUNC_VERIFICATION_REDIS_KEY = "QYDisk:web:verification"
+
+        /*用户自动登录信息*/
+        const val FUNC_AUTOLOGIN_REDIS_KET = "QYDisk:web:autologin"
     }
 }

@@ -1,6 +1,6 @@
 package com.dy.networkdisk.web.interceptor
 
-import com.dy.networkdisk.api.config.ConfigRedisKey
+import com.dy.networkdisk.api.config.ConfigInfo
 import com.dy.networkdisk.web.tool.ConfigUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -16,7 +16,7 @@ class PageConfigInterceptor @Autowired constructor(
 
     override fun postHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any, modelAndView: ModelAndView?) {
         modelAndView?.let {
-            val title = config.getString(ConfigRedisKey.WEB_TITLE,"青叶网盘")
+            val title = config.getString(ConfigInfo.WEB_TITLE,"青叶网盘")
             it.addObject("title",title)
         }
     }

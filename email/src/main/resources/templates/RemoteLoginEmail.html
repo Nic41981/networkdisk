@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <title>异地登录</title>
+</head>
+<body>
+    <p>亲爱的<u>
+        <i th:text="${msg.nickname}">用户</i></u>:</p>
+    <p style="text-indent: 2em">
+        系统检测到您的账号存在异常登录，详细信息如下：
+    </p>
+    <ul style="padding-left: 4em">
+        <li>账号：
+            <b th:text="${msg.email}">
+                test@QYDisk.com
+            </b>
+        </li>
+        <li>
+            昵称：
+            <b th:text="${msg.nickname}">
+                用户
+            </b>
+        </li>
+        <li>
+            上次登录位置：
+            <b th:text="${msg.lastLocation}">
+                unknown
+            </b>
+        </li>
+        <li>本次登录位置：
+            <b th:text="${msg.thisLocation}">
+                unknown
+            </b>
+        </li>
+        <li>
+            登录IP：
+            <b th:text="${msg.loginIP}">
+                unknown
+            </b>
+        </li>
+    </ul>
+    <p style="text-indent: 2em">
+        如果本次登录您不知情，请尽快修改您的密码，避免账号被盗。
+    </p>
+    <div style="float: right;text-align: center">
+        <i>青叶网盘</i>
+        <p style="margin: 0 auto" th:text="${#dates.format(create_time,'yyyy年MM月dd日')}">2020年02月04日<p>
+    </div>
+</body>
+</html>

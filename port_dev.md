@@ -15,9 +15,15 @@
 |8080|web|运行端口|
 |8180|admin|运行端口|
 |8181|user|运行端口|
+|8182|file|运行端口|
+|8183|upload|运行端口|
 |8280|email|运行端口|
 |18180|admin|Dubbo开放端口|
 |18181|user|Dubbo开放端口|
+|18182|file|Dubbo开放端口|
+|18183|upload|Dubbo开放端口|
+|28183|upload|Jetty端口|
+|18280|email|Dubbo开放端口|
 ---
 #### 3.工具预留端口
 |端口|服务|描述|

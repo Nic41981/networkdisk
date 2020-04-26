@@ -20,7 +20,7 @@ $(function () {
     $("#input-verification").textbox({
         prompt: "验证码",
         required: true,
-        validType: ["remote['http://" + window.location.host + "/verification','code']"],
+        validType: ["remote['http://" + window.location.host + "/tool/verification','code']"],
         validateOnCreate: false,
         tipPosition: "left",
         invalidMessage: "验证码错误！"
@@ -31,7 +31,7 @@ $(function () {
     });
     //验证码图片
     $("#vc-img").click(function () {
-        $(this).attr("src", "/verification?");
+        $(this).attr("src", "/tool/verification?");
     });
     //帮助按钮
     $("#create-account-btn").tooltip({
@@ -46,7 +46,7 @@ $(function () {
         position: "right",
         content: "换一张"
     }).click(function () {
-        $("#vc-img").attr("src", "/verification?");
+        $("#vc-img").attr("src", "/tool/verification?");
     });
     //登录
     $("#login-btn").linkbutton({

@@ -1,20 +1,23 @@
 package com.dy.networkdisk.user.service
 
-import com.dy.networkdisk.api.config.ConfigRedisKey
-import com.dy.networkdisk.api.config.QueueConst
-import com.dy.networkdisk.api.dto.dubbo.user.ActiveDTO
-import com.dy.networkdisk.api.dto.dubbo.user.RegisterDTO
-import com.dy.networkdisk.api.dto.mq.email.UserActiveEmailDTO
+import com.dy.networkdisk.api.config.ConfigInfo
+import com.dy.networkdisk.api.dto.email.ActiveEmailDTO
+import com.dy.networkdisk.api.dto.user.ActiveDTO
+import com.dy.networkdisk.api.dto.user.RegisterDTO
+import com.dy.networkdisk.api.email.UserEmailService
 import com.dy.networkdisk.api.user.UserRegisterService
 import com.dy.networkdisk.user.bo.GuestsBO
 import com.dy.networkdisk.user.config.Const
 import com.dy.networkdisk.user.dao.UserMapper
 import com.dy.networkdisk.user.po.UserPO
 import com.dy.networkdisk.user.tool.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.apache.dubbo.config.annotation.Reference
 import org.mindrot.jbcrypt.BCrypt
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
-import org.springframework.jms.core.JmsTemplate
 import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -25,16 +28,17 @@ import org.apache.dubbo.config.annotation.Service as DubboService
 @DubboService
 class UserRegisterServiceImpl @Autowired constructor(
         private val template: StringRedisTemplate,
-        private val jmsTemplate: JmsTemplate,
         private val config: ConfigUtil,
         private val idWorker: IDWorker
 ) : UserRegisterService {
     
     @Resource
     private lateinit var mapper: UserMapper
-    
+
+    @Reference
+    private lateinit var emailService: UserEmailService
+
     override fun register(dto: RegisterDTO): Boolean {
-        //redis加锁
         val bo = GuestsBO().apply {
             email = dto.email
             nickname = dto.nickname
@@ -48,7 +52,7 @@ class UserRegisterServiceImpl @Autowired constructor(
         val lock = UUID.randomUUID().toString()
         val password = bo.password
         val value = GsonUtil.toJson(bo)
-        val expire = config.getLong(ConfigRedisKey.USER_GUESTS_EXPIRE, 12L)
+        val expire = config.getLong(ConfigInfo.USER_GUESTS_EXPIRE, 12L)
         //信息加锁
         val result = template.opsForHash<String,String>().putIfAbsent(key,"lock",lock)
         if (!result) {
@@ -66,16 +70,17 @@ class UserRegisterServiceImpl @Autowired constructor(
             return false
         }
         //发送激活邮件
-        val email = UserActiveEmailDTO().apply {
-            this.email = bo.email
-            this.nickname = bo.nickname
-            this.registerTime = bo.registerTime
-            this.registerIP = bo.registerIP
-            this.registerIPLocation = bo.registerIPLocation
-            this.lock = lock
-            this.activeURL = "${dto.host}/user/register/active"
+        GlobalScope.launch(Dispatchers.IO) {
+            emailService.activeAccount(ActiveEmailDTO(
+                    email = bo.email,
+                    nickname = bo.nickname,
+                    registerTime = bo.registerTime,
+                    registerIP = bo.registerIP,
+                    registerIPLocation = bo.registerIPLocation,
+                    lock = lock,
+                    activeURL = "${dto.host}/user/register/active"
+            ))
         }
-        jmsTemplate.convertAndSend(QueueUtil.getQueue(QueueConst.activeMailQueue), GsonUtil.toJson(email))
         return true
     }
 

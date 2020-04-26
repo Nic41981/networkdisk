@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="cn" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/common_style.css"
+          th:href="'/style/common_style.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/easyui/themes/default/easyui.css"
+          th:href="'/easyui/themes/default/easyui.css'"/>
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/webuploader/webuploader.css"
+          th:href="'/webuploader/webuploader.css'">
+    <link rel="stylesheet"
+          type="text/css"
+          href="../static/style/home_style.css"
+          th:href="'/style/main_style.css'"/>
+    <script type="text/javascript"
+            src="../static/js/jquery-3.4.1.min.js"
+            th:src="'/js/jquery-3.4.1.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/jquery.easyui.min.js"
+            th:src="'/easyui/jquery.easyui.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/easyui/locale/easyui-lang-zh_CN.js"
+            th:src="'/easyui/locale/easyui-lang-zh_CN.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/webuploader/webuploader.min.js"
+            th:src="'/webuploader/webuploader.min.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/cryptoJS/core.js"
+            th:src="'/cryptoJS/core.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/cryptoJS/sha256.js"
+            th:src="'/cryptoJS/sha256.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/js/home.js"
+            th:src="'/js/home.js'">
+    </script>
+    <script type="text/javascript"
+            src="../static/js/home_upload.js"
+            th:src="'/js/home_upload.js'">
+    </script>
+</head>
+<body id="root" class="easyui-layout">
+    <div id="north_panel" class="panel" data-options="region:'north',width:'100%',height:'20%'">
+        <!--/*@thymesVar id="title" type="java.lang.String"*/-->
+        <h1 th:text="${title}" class="title-big">青叶网盘</h1>
+    </div>
+    <div id="west_panel"
+         data-options="region:'west',width:'20%',height:'80%',hideCollapsedContent:false,expandMode:'dock'"
+         title="快捷导航">
+        <div id="navigation">
+            <div data-options="collapsed:false,collapsible:false" style="padding:10px;">
+                <input id="search" style="width:100%;">
+            </div>
+            <div title="最近访问" style="padding:10px;">
+            </div>
+            <div title="跳转" style="padding:10px">
+                <ul id="folder-tree"></ul>
+            </div>
+        </div>
+    </div>
+    <div id="center_panel" class="panel" data-options="region:'center',width:'80%',height:'80%'">
+        <table id="main-table">
+        </table>
+        <div id="toolbar">
+            <a id="root-btn" style="width: 60px" href="javascript:void(0)">首页</a>
+            <a id="parent-btn" style="width: 80px" href="javascript:void(0)">上一级</a>
+            <a id="create-folder-btn" style="width: 120px" href="javascript:void(0)">新建文件夹</a>
+            <div id="upload-btn" style="width: 60px;float: right" href="javascript:void(0)">上传</div>
+        </div>
+        <div id="footer">
+            <b>当前：</b><span>/root</span>
+        </div>
+    </div>
+    <div id="context-menu">
+        <div id="reload_menu_item">刷新</div>
+        <div class="menu-sep"></div>
+        <div id="open_menu_item">打开</div>
+        <div id="download_menu_item">下载</div>
+        <div class="menu-sep"></div>
+        <div id="copy_menu_item">复制</div>
+        <div id="cut_menu_item">剪切</div>
+        <div id="paste_menu_item">粘贴</div>
+        <div class="menu-sep"></div>
+        <div id="rename_menu_item">重命名</div>
+        <div id="delete_menu_item">删除</div>
+    </div>
+    <div id="uploader">
+        <!--用来存放文件信息-->
+        <div id="fileList" class="uploader-list"></div>
+        <div id="upload-btns">
+            <div id="add-file-btn">添加文件</div>
+            <a id="control-upload-btn">开始上传</a>
+        </div>
+    </div>
+    <script id="values" type="text/javascript" th:attr="root_id=${rootID}" th:inline="javascript">
+        //根节点ID
+        let root_id = $("#values").data("root_id");
+        //节点栈
+        var node_stack = [];
+        //当前父节点ID
+        var current_parent = root_id;
+        //根节点信息
+        var root_node = {
+            path: "/root",
+            remote: "/file/children.json",
+            params: {
+                id: root_id
+            }
+        };
+        //当前节点信息
+        var current_node = {
+            path: "/root",
+            remote: "/file/children.json",
+            params: {
+                id:root_id
+            }
+        };
+        //剪贴板信息
+        var clipboard = null;
+        //可编辑信息
+        var canEditable = true
+    </script>
+</body>
+</html>

@@ -16,10 +16,10 @@ class Const {
         /*游客账号信息*/
         const val FUNC_GUESTS_REDIS_KEY = "QYDisk:user:guests"
 
-        /*用户登录和会话信息*/
-        const val FUNC_USER_ONLINE_REDIS_KEY = "QYDisk:user:online"
-
         /*用户封禁信息*/
         const val FUNC_USER_LOCK_REDIS_KEY = "QYDisk:user:lock"
+
+        /*用户自动登录信息*/
+        const val FUNC_USER_AUTOLOGIN_REDIS_KET = "QYDisk:user:autologin"
     }
  }

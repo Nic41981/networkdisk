@@ -1,14 +1,11 @@
 package com.dy.networkdisk.admin;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.runApplication
 
 @SpringBootApplication
-open class AdminApplication {
-    companion object{
-        @JvmStatic
-        fun main(args: Array<String>) {
-            SpringApplication.run(AdminApplication::class.java, *args)
-        }
-    }
+class AdminApplication
+
+fun main(args: Array<String>){
+    runApplication<AdminApplication>(*args)
 }

@@ -1,16 +1,19 @@
 package com.dy.networkdisk.user.po
 
+import com.dy.networkdisk.api.annotation.NoArg
 import java.lang.StringBuilder
 import java.util.*
 
+@NoArg
 data class LoginPO(
-        var id: Long = 0L,
-        var userID: Long = 0L,
-        var loginTime: Date = Date(),
-        var loginIP: String = "",
-        var loginIPLocation: String = ""
+        var id: Long,
+        var userID: Long,
+        var loginTime: Date,
+        var loginIP: String,
+        var loginIPLocation: String,
+        var type: String
 ){
-    fun format(){
+    init {
         if (loginIPLocation.length > 200){
             val locationArray = loginIPLocation.split("-")
             val buff = StringBuilder()

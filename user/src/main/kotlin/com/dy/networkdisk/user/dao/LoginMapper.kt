@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper
 @Mapper
 interface LoginMapper {
     fun insert(po: LoginPO)
+    fun findLastIPLocationByUserID(userID: Long): String?
 }

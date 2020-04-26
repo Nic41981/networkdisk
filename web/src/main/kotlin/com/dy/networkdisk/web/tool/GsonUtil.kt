@@ -1,22 +1,23 @@
 package com.dy.networkdisk.web.tool
 
 import com.google.gson.Gson
-import java.lang.reflect.Type
+import com.google.gson.reflect.TypeToken
 
-class GsonUtil {
-    companion object{
-        private val gson = Gson()
+val gson = Gson()
 
-        fun toJson(obj: Any): String{
-            return gson.toJson(obj)
-        }
+fun Any?.toJson(): String{
+    this ?: return "{}"
+    return gson.toJson(this)
+}
 
-        fun <T> fromJson(json: String,type: Type): T?{
-            return try {
-                gson.fromJson(json,type)
-            } catch (e: Exception){
-                null
-            }
-        }
+inline fun <reified T> String?.fromJson(): T?{
+    if (this.isNullOrBlank()){
+        return null
+    }
+    return try {
+        val type = object : TypeToken<T>(){}.type
+        gson.fromJson(this,type)
+    } catch (e: Exception){
+        null
     }
 }

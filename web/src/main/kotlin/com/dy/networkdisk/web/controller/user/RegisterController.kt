@@ -1,16 +1,14 @@
 package com.dy.networkdisk.web.controller.user
 
-import com.dy.networkdisk.api.config.ConfigRedisKey
-import com.dy.networkdisk.api.dto.dubbo.user.ActiveDTO
-import com.dy.networkdisk.api.dto.dubbo.user.RegisterDTO
+import com.dy.networkdisk.api.config.ConfigInfo
+import com.dy.networkdisk.api.dto.user.ActiveDTO
+import com.dy.networkdisk.api.dto.user.RegisterDTO
 import com.dy.networkdisk.api.user.UserRegisterService
 import com.dy.networkdisk.web.config.Const
-import com.dy.networkdisk.web.tool.ConfigUtil
-import com.dy.networkdisk.web.tool.IPLocation
-import com.dy.networkdisk.web.tool.KaptchaUtil
-import com.dy.networkdisk.web.vo.ActiveVO
-import com.dy.networkdisk.web.vo.MessagePageVO
-import com.dy.networkdisk.web.vo.RegisterVO
+import com.dy.networkdisk.web.tool.*
+import com.dy.networkdisk.web.vo.*
+import com.dy.networkdisk.web.vo.user.ActiveVO
+import com.dy.networkdisk.web.vo.user.RegisterVO
 import org.apache.dubbo.config.annotation.Reference
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -30,17 +28,36 @@ class RegisterController @Autowired constructor(
     @Reference
     private lateinit var service: UserRegisterService
 
+    /*****扩展*****/
+    private val HttpServletRequest.ip: String
+        get() {
+            return getAttribute(Const.IP_KEY) as String
+        }
+    private val HttpServletRequest.sessionID: Long
+        get() {
+            return (getAttribute(Const.SESSION_KEY) ?: error("")) as Long
+        }
+
     @GetMapping("/register")
-    fun getRegisterPage(): String {
-        return "register"
+    fun getPage(model: ModelAndView): ModelAndView {
+        val allowRegister = config.getBoolean(ConfigInfo.WEB_REGISTER_ALLOW,true)
+        return if (allowRegister){
+            model.apply { viewName = "register" }
+        }
+        else{
+            model.apply {
+                viewName = "message"
+                addObject(MessagePageVO.NAME,MessagePageVO("提示")
+                        .notAllowRegister().jumpTo("登录","/usr/login")
+                )
+            }
+        }
     }
 
     @PostMapping("/register")
-    fun submitRegister(request: HttpServletRequest, model: ModelAndView, vo: RegisterVO): ModelAndView? {
+    fun submit(request: HttpServletRequest, model: ModelAndView, vo: RegisterVO): ModelAndView {
         //IP信息查询(异步)
-        val ip = request.getAttribute(Const.IP_KEY) as String
-        val token = request.getAttribute(Const.ONLINE_TOKEN_KEY) as String
-        val ipLocation = IPLocation(ip)
+        val ipLocation = IPLocation(request.ip)
         //注册信息复核
         var result = vo.run {
             //邮箱检查
@@ -55,7 +72,6 @@ class RegisterController @Autowired constructor(
                 nickname = "游客"
             }
             //密码检查
-            password = password.trim()
             if (password.trim().also { password = it }.length !in 5..20){
                 return@run false
             }
@@ -63,36 +79,30 @@ class RegisterController @Autowired constructor(
             if(host.isEmpty()){
                 return@run false
             }
-            return@run kaptcha.check(token, vo.verificationCode)
+            kaptcha.check(request.sessionID, vo.verificationCode)
         }
         if (!result) {
             //TODO 管理员预警邮件
             return model.apply {
                 viewName = "message"
-                val message = MessagePageVO(Const.WANG_MSG_TYPE).apply {
-                    content = arrayListOf(
-                            "系统检测到您在${Calendar.YEAR}年${Calendar.MONTH}月${Calendar.DAY_OF_MONTH}日" +
-                                    "${Calendar.HOUR_OF_DAY}时${Calendar.MINUTE}分提交的注册操作存在异常，" +
-                                    "已经中断操作并通知管理员处理。",
-                            "异常原因：非法参数"
-                    )
-                    jump("注册","/user/register")
-                }
-                model.addObject("message",message)
+                model.addObject(MessagePageVO.NAME,MessagePageVO("操作异常")
+                        .invalidOperation("注册","参数异常").withTime()
+                        .jumpTo("注册","/user/register")
+                )
             }
         }
         //邀请码处理
         var inviterID = 0L
-        val onlyInvite = config.getBoolean(ConfigRedisKey.WEB_REGISTER_ONLY_INVITE, false)
+        val onlyInvite = config.getBoolean(ConfigInfo.WEB_REGISTER_ONLY_INVITE, false)
         inviterID = Random().nextLong() //TODO 查找邀请者ID
         if (onlyInvite && inviterID == 0L) {
             return model.apply {
-                viewName = "message"
-                val message = MessagePageVO(Const.INFO_MSG_TYPE).apply {
-                    content = arrayListOf("管理员开启了注册仅邀请，请输入有效的邀请码注册。")
-                    jump("注册", "/user/register")
-                }
-                addObject("message",message)
+                viewName = "register"
+                addObject(ResultDialogVO.NAME,ResultDialogVO(
+                        title = "注册失败",
+                        type = ResultDialogVO.TYPE_INFO,
+                        content = "管理员开启了仅邀请注册，请输入邀请码完成注册。"
+                ))
             }
         }
         //用户注册
@@ -110,49 +120,33 @@ class RegisterController @Autowired constructor(
             //用户已注册
             return model.apply {
                 viewName = "message"
-                val message = MessagePageVO(Const.INFO_MSG_TYPE).apply {
-                    content = arrayListOf("该邮箱已注册，您可以直接登录或者尝试找回密码。")
-                    jump("登录", "/user/login")
-                }
-                addObject("message",message)
+                addObject(MessagePageVO.NAME,MessagePageVO("提示")
+                        .hasRegister().jumpTo("登录","/user/login")
+                )
             }
         }
-        val expire = config.getInteger(ConfigRedisKey.USER_GUESTS_EXPIRE, 12)
+        val expire = config.getInteger(ConfigInfo.USER_GUESTS_EXPIRE, 12)
         return model.apply{
             viewName = "message"
-            val message = MessagePageVO(Const.INFO_MSG_TYPE).apply {
-                content = arrayListOf(
-                        "激活邮件将发送至您的邮箱。",
-                        "游客账号无法使用网盘功能，账号信息会保存${expire}个小时，请及时激活您的账号。"
-                )
-                jump("登录", "/user/login")
-            }
-            addObject("message",message)
+            addObject(MessagePageVO.NAME,MessagePageVO("账号激活")
+                    .activeEmail(expire).withTime().jumpTo("登录", "/user/login")
+            )
         }
     }
 
     @GetMapping("/register/active")
     fun active(request: HttpServletRequest, model: ModelAndView, vo: ActiveVO): ModelAndView? {
         //IP信息查询(异步)
-        val ip = request.getAttribute(Const.IP_KEY) as String
-        val ipLocation = IPLocation(ip)
+        val ipLocation = IPLocation(request.ip)
         //参数检查
-        var result = vo.run {
-            return@run email.isNotBlank() && lock.isNotBlank()
-        }
+        var result = vo.run { email.isNotBlank() && lock.isNotBlank() }
         if (!result) {
             //TODO 管理员预警邮件
             return model.apply {
                 viewName = "message"
-                val message = MessagePageVO(Const.WANG_MSG_TYPE).apply {
-                    content = arrayListOf(
-                            "系统检测到您在${Calendar.YEAR}年${Calendar.MONTH}月${Calendar.DAY_OF_MONTH}日" +
-                                    "${Calendar.HOUR_OF_DAY}时${Calendar.MINUTE}分提交的激活操作存在异常，" +
-                                    "已经中断操作并通知管理员处理。",
-                            "异常原因：非法参数"
-                    )
-                }
-                addObject("message",message)
+                addObject(MessagePageVO.NAME,MessagePageVO("操作异常")
+                        .invalidOperation("账号激活","非法参数")
+                )
             }
         }
         val dto = ActiveDTO().apply {
@@ -165,21 +159,16 @@ class RegisterController @Autowired constructor(
         if (result) {
             return model.apply {
                 viewName = "message"
-                val message = MessagePageVO(Const.INFO_MSG_TYPE).apply {
-                    content = arrayListOf("账号激活成功,现在您可以登录使用全部功能。")
-                    jump("登录", "/user/login")
-                }
-                addObject("message",message)
+                addObject(MessagePageVO.NAME,MessagePageVO("激活成功")
+                        .activeSuccess().withTime().jumpTo("登录", "/user/login")
+                )
             }
         }
         return model.apply {
             viewName = "message"
-            val message = MessagePageVO(Const.WANG_MSG_TYPE).apply {
-                content = arrayListOf("激活信息不存在或已失效,请重新注册。")
-                jump("注册","/user/register")
-            }
-            addObject("message",message)
+            addObject(MessagePageVO.NAME,MessagePageVO("激活失败")
+                    .activeFail().jumpTo("注册","/user/register")
+            )
         }
     }
-
 }

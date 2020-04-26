@@ -33,7 +33,7 @@
             th:src="'/js/login.js'" >
     </script>
 </head>
-<body>
+<body class="with-bg">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <h1 class="title-big" th:text="${title}">青叶网盘</h1>
     <div class="login-box">
@@ -76,7 +76,7 @@
                                  class="vc-img"
                                  src="../static/image/vc.tmp.jpeg"
                                  alt="验证码"
-                                 th:src="'/verification?'"/>
+                                 th:src="'/tool/verification?'"/>
                         </td>
                         <td>
                             <a class="help-link" href="javascript:void(0)">

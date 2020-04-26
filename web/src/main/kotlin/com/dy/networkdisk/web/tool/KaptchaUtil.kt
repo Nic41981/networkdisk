@@ -1,6 +1,6 @@
 package com.dy.networkdisk.web.tool
 
-import com.dy.networkdisk.api.config.ConfigRedisKey
+import com.dy.networkdisk.api.config.ConfigInfo
 import com.dy.networkdisk.web.config.Const
 import com.dy.networkdisk.web.config.KaptchaKeyInfo
 import com.google.code.kaptcha.impl.DefaultKaptcha
@@ -14,15 +14,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 @Component
-class KaptchaUtil{
+class KaptchaUtil @Autowired constructor(
+        private val template: StringRedisTemplate,
+        private val config: ConfigUtil
+){
     private val random = SecureRandom()
-
-    @Autowired
-    private lateinit var template: StringRedisTemplate
-
-    @Autowired
-    private lateinit var config: ConfigUtil
-
     private val kaptcha = DefaultKaptcha()
 
     /**
@@ -30,16 +26,16 @@ class KaptchaUtil{
      * @param token 用户会话信息
      * @return 验证码字符串
      */
-    fun createText(token: String): String {
-        val charset = config.getString(ConfigRedisKey.WEB_VERIFICATION_CHARSET, Const.VERIFICATION_CHINESE)
-        val length = config.getInteger(ConfigRedisKey.WEB_VERIFICATION_LENGTH, 2)
-        val expire = config.getLong(ConfigRedisKey.WEB_VERIFICATION_EXPIRE, 5L)
+    fun createText(sessionID: Long): String {
+        val charset = config.getString(ConfigInfo.WEB_VERIFICATION_CHARSET, Const.VERIFICATION_CHINESE)
+        val length = config.getInteger(ConfigInfo.WEB_VERIFICATION_LENGTH, 2)
+        val expire = config.getLong(ConfigInfo.WEB_VERIFICATION_EXPIRE, 5L)
         val buff = StringBuilder(length)
         for (i in 1..length) {
             buff.append(charset[random.nextInt(charset.length)])
         }
         val answer = buff.toString()
-        val key = "${Const.FUNC_VERIFICATION_REDIS_KEY}:${token}"
+        val key = "${Const.FUNC_VERIFICATION_REDIS_KEY}:${sessionID}"
         template.opsForValue().set(key,answer,expire,TimeUnit.MINUTES)
         return answer
     }
@@ -59,9 +55,9 @@ class KaptchaUtil{
      * @param code 用户输入验证码
      * @return 判断结果
      */
-    fun check(token: String, code: String): Boolean {
-        val ignoreCase = config.getBoolean(ConfigRedisKey.WEB_VERIFICATION_CASE_IGNORE, false)
-        val key = "${Const.FUNC_VERIFICATION_REDIS_KEY}:${token}"
+    fun check(sessionID: Long, code: String): Boolean {
+        val ignoreCase = config.getBoolean(ConfigInfo.WEB_VERIFICATION_CASE_IGNORE, false)
+        val key = "${Const.FUNC_VERIFICATION_REDIS_KEY}:${sessionID}"
         val answer = template.opsForValue()[key] ?: return false
         return answer.equals(code,ignoreCase)
     }
@@ -73,7 +69,7 @@ class KaptchaUtil{
     private fun getKaptcha(): DefaultKaptcha {
         val properties = Properties()
         for (it in KaptchaKeyInfo.values()) {
-            val value = config.getString(it.redisKey, "")
+            val value = config.getString(it.info, "")
             if (value.isNotBlank()) {
                 properties.setProperty(it.kaptchaKey, value)
             }

@@ -1,11 +1,15 @@
 package com.dy.networkdisk.api.user
 
-import com.dy.networkdisk.api.dto.dubbo.user.LoginDTO
-import com.dy.networkdisk.api.dto.dubbo.user.LoginResult
+import com.dy.networkdisk.api.dto.QYResult
+import com.dy.networkdisk.api.dto.user.AutoLoginDTO
+import com.dy.networkdisk.api.dto.user.LoginDTO
+import com.dy.networkdisk.api.dto.user.LoginResult
 
 interface UserLoginService {
 
-    fun getUserType(email: String): String
+    fun isGuest(email: String,password: String): Boolean
 
-    fun login(dto: LoginDTO): LoginResult
+    fun login(dto: LoginDTO): QYResult<LoginResult>
+
+    fun autoLogin(dto: AutoLoginDTO): Boolean
 }

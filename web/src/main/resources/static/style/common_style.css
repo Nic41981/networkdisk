@@ -1,4 +1,4 @@
-body{
+.with-bg{
     background: url("../image/bg.jpg") no-repeat center center fixed;
     background-size: 100% 100%;
 }
@@ -21,4 +21,18 @@ a:visited{color: black}
     width: 100px;
     height: 30px;
     margin: -10px 5px;
+}
+
+.left-leaf{
+    width: 20%;
+    background: url("../image/left-leaf.png");
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.right-leaf{
+    width: 20%;
+    background: url("../image/right-leaf.png");
+    margin-right: 0;
+    margin-bottom: 0;
 }

@@ -1,0 +1,51 @@
+#north_panel{
+    background: url("../image/left-leaf.png") left top no-repeat, url("../image/right-leaf.png") right bottom no-repeat;
+    background-size: auto 100%;
+}
+
+.folder{
+    content: url("../image/Folder_Icon.png");
+    vertical-align: sub;
+}
+
+.file{
+    content: url("../image/File_Icon.png");
+    vertical-align: sub;
+}
+
+.file_list_title {
+    font-weight: bold;
+    font-size: 15px;
+    word-break:break-all;
+    word-wrap:break-word;
+}
+
+.file_list_status {
+    font-size: 10px;
+}
+
+.progressbar-text {
+    width: 100% !important;
+    text-align: center;
+}
+
+#upload-btns {
+    width: 100%;
+    margin-top: 30px;
+    text-align: center;
+}
+
+#add-file-btn {
+    display: inline;
+    vertical-align: middle;
+    width: 80px;
+    height: 30px;
+    margin: 0 5px;
+}
+
+#control-upload-btn {
+    vertical-align: middle;
+    width: 80px;
+    height: 30px;
+    margin: 0 5px;
+}

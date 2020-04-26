@@ -1,7 +1,7 @@
 package com.dy.networkdisk.api.user;
 
-import com.dy.networkdisk.api.dto.dubbo.user.ActiveDTO;
-import com.dy.networkdisk.api.dto.dubbo.user.RegisterDTO;
+import com.dy.networkdisk.api.dto.user.ActiveDTO;
+import com.dy.networkdisk.api.dto.user.RegisterDTO;
 
 interface UserRegisterService {
 

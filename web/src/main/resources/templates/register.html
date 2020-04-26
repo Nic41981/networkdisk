@@ -33,7 +33,7 @@
             th:src="'/js/register.js'" >
     </script>
 </head>
-<body>
+<body class="with-bg">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <h1 class="title-big" th:text="${title}">青叶网盘</h1>
     <div class="register_box">
@@ -87,7 +87,7 @@
                                  class="vc-img"
                                  src="../static/image/vc.tmp.jpeg"
                                  alt="验证码"
-                                 th:src="'/verification?'"/>
+                                 th:src="'/tool/verification?'"/>
                         </td>
                         <td>
                             <a class="help-link" href="javascript:void(0)">
@@ -106,5 +106,8 @@
             </form>
         </div>
     </div>
+    <script type="text/javascript" th:if="${result} != null" th:inline="javascript">
+        $.messager.alert([[${result.title}]],[[${result.content}]],[[${result.type}]])
+    </script>
 </body>
 </html>

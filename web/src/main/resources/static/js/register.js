@@ -27,7 +27,7 @@ $(function () {
     $("#input-invitation").textbox({
         prompt: "邀请码",
         //TODO 远程验证邀请码
-        validType:["remote['http://" + window.location.host + "/verification','code']"],
+        validType:["remote['http://" + window.location.host + "/tool/verification','code']"],
         validateOnCreate: false,
         tipPosition: "left",
         invalidMessage: "邀请码错误！"
@@ -35,7 +35,7 @@ $(function () {
     $("#input-verification").textbox({
         prompt: "验证码",
         required: true,
-        validType:["remote['" + window.location.origin + "/verification','code']"],
+        validType:["remote['" + window.location.origin + "/tool/verification','code']"],
         validateOnCreate: false,
         tipPosition: "left",
         invalidMessage: "验证码错误！"
@@ -53,7 +53,7 @@ $(function () {
         position: "right",
         content: "换一张"
     }).click(function () {
-        $("#vc-img").attr("src", "/verification?");
+        $("#vc-img").attr("src", "/tool/verification?");
     });
     //域名信息
     $("#input-host").val(window.location.origin);

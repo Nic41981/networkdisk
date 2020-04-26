@@ -1,14 +1,12 @@
 package com.dy.networkdisk.user.tool
 
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class IDWorker{
     //服务ID
-    private val ServiceID = 1L
+    private val serviceID = 1L
 
     //服务器ID
     @Value("\${QYDisk.id-worker.workerID}")
@@ -60,7 +58,7 @@ class IDWorker{
         }
         lastTimestamp = timestamp
         return timestamp - startTimestamp shl timestampLeftShift.toInt() or
-                (ServiceID shl serviceIDShift.toInt()) or
+                (serviceID shl serviceIDShift.toInt()) or
                 (workerID shl workerIDShift.toInt()) or sequence
     }
 

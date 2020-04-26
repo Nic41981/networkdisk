@@ -28,7 +28,7 @@
             src="../static/easyui/locale/easyui-lang-zh_CN.js"
             th:src="'/easyui/locale/easyui-lang-zh_CN.js'">
     </script>
-    <script type="text/javascript" th:if="${message.willJump}">
+    <script type="text/javascript" th:if="${message.jump != null}">
         $(function () {
             let expire = 10;
             setInterval(function () {
@@ -37,23 +37,23 @@
                     $("#jump-expire").text(expire);
                 }
                 else {
-                    window.location.href = '[[${message.jumpURL}]]'
+                    window.location.href = '[[${message.jump.url}]]'
                 }
             },1000);
         });
     </script>
 </head>
-<body>
+<body class="with-bg">
     <!--/*@thymesVar id="title" type="java.lang.String"*/-->
     <h1 class="title-big" th:text="${title}">青叶网盘</h1>
     <div class="message-box">
         <div class="easyui-panel" style="text-align: center">
-            <header class="message-box-header" th:text="${message.type}">提示</header>
+            <header class="message-box-header" th:text="${message.title}">提示</header>
             <div class="message-inner-box" th:each="str:${message.content}">
                 <p style="text-indent: 2em" th:text="${str}">内容</p>
             </div>
-            <p th:if="${message.willJump}">
-                <span id="jump-expire">10</span>秒后跳转至<a href="#" th:text="${message.jumpString}" th:href="${message.jumpURL}">目标</a>
+            <p th:if="${message.jump != null}">
+                <span id="jump-expire">10</span>秒后跳转至<a href="#" th:text="${message.jump.name}" th:href="${message.jump.url}">目标</a>
             </p>
         </div>
     </div>
