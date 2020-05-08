@@ -1,6 +1,6 @@
 package com.dy.networkdisk.web.controller
 
-import com.dy.networkdisk.api.file.FileHomeService
+import com.dy.networkdisk.api.file.FileWebService
 import com.dy.networkdisk.web.tool.sessionInfo
 import org.apache.dubbo.config.annotation.Reference
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ class MainController @Autowired constructor(
 ) {
 
     @Reference
-    private lateinit var service: FileHomeService
+    private lateinit var service: FileWebService
 
     @GetMapping("/")
     fun getPage(model: ModelAndView,request: HttpServletRequest): ModelAndView{

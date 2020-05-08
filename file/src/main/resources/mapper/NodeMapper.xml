@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dy.networkdisk.file.dao.NodeMapper">
+    <select id="findUserRootID" parameterType="long" resultType="long">
+        select id from node where owner = #{userID} and isFolder = true and parent = 0;
+    </select>
+
+    <insert id="addNode" parameterType="com.dy.networkdisk.file.po.NodePO">
+        insert into node (id, owner, parent, isFolder, file, name, status, createTime)
+        values (#{id}, #{owner}, #{parent}, #{isFolder}, #{file}, #{name}, #{status}, #{createTime})
+    </insert>
+
+    <select id="getChildrenFolderTree" resultType="map">
+        select id,name from node
+        where owner = #{userID}
+          and parent = #{parent}
+          and isFolder = true
+          and status != 'DELETE';
+    </select>
+
+    <select id="findFileLastStatusByID" parameterType="long" resultType="string">
+        select status from node where id = #{id};
+    </select>
+
+    <select id="selectChildrenFolder" resultType="com.dy.networkdisk.file.po.NodePO">
+        select id, name, createTime from node
+        where owner = #{userID}
+          and parent = #{parent}
+          and isFolder = true
+          and status != 'DELETE';
+    </select>
+
+    <select id="selectChildrenFile" resultType="com.dy.networkdisk.file.po.NodePO">
+        select id, file, name, status, createTime from node
+        where owner = #{userID}
+          and parent = #{parent}
+          and isFolder = false
+          and status != 'DELETE';
+    </select>
+
+    <select id="checkSameNameExist" resultType="int">
+        select count(1) from node
+        where owner = #{userID}
+          and parent = #{parent}
+          and isFolder = #{isFolder}
+          and name = #{name}
+          and status != 'DELETE';
+    </select>
+
+    <select id="checkPermission" resultType="string">
+        select status from node
+        where id = #{id}
+          <if test="parent != null">
+              and parent = #{parent}
+          </if>
+          and owner = #{userID}
+          and isFolder = #{isFolder}
+    </select>
+
+    <update id="rename">
+        update node set name = #{name} where id = #{id};
+    </update>
+
+    <update id="updateFileStatus">
+        update node set status = #{status}
+        where id = #{id} and status != 'DELETE'
+    </update>
+
+    <update id="delete" parameterType="long">
+        update node set status = 'DELETE' where id = #{id};
+    </update>
+
+    <update id="deleteAllChildrenFile" parameterType="long">
+        update node set status = 'DELETE'
+        where parent = #{parent}
+          and isFolder = false;
+    </update>
+
+</mapper>

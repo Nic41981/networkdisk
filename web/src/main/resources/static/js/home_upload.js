@@ -45,7 +45,7 @@ $(function () {
 //事件
 $(function () {
     uploader.on('fileQueued',onFileQueued);
-    uploader.on('uploadBeforeSend',onUploadBeforeSend);
+    // uploader.on('uploadBeforeSend',onUploadBeforeSend);
     uploader.on('uploadSuccess', onUploadSuccess);
     uploader.on('uploadError', onUploadError);
     uploader.on('uploadComplete', onUploadComplete)

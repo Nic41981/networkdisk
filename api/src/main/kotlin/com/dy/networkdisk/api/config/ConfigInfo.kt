@@ -141,5 +141,12 @@ enum class ConfigInfo(val propKey:String,val redisKey: String,val default: Strin
             "mail.signature",
             "QYDisk:config:mail:signature",
             "青叶网盘"
+    ),
+
+    //上传任务超时
+    UPLOAD_EXPIRE(
+            "upload.expire",
+            "QYDisk:config:upload:expire",
+            "24"
     );
 }

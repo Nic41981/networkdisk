@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dy.networkdisk.file.dao.FileMapper">
+
+    <insert id="insert" parameterType="com.dy.networkdisk.file.po.FilePO">
+        insert into file(id, size, mime, uploader, uploadTime) 
+        values (#{id},#{size},#{mime},#{uploader},#{uploadTime})
+    </insert>
+    
+    <select id="selectSizesAndMimesByIds">
+        select id, size, mime from file
+        where id in <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

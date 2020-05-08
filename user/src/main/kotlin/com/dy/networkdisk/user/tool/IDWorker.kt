@@ -1,12 +1,13 @@
 package com.dy.networkdisk.user.tool
 
+import com.dy.networkdisk.api.config.IDWorkerConfig
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class IDWorker{
     //服务ID
-    private val serviceID = 1L
+    private val serviceID = IDWorkerConfig.USER_MODULE.id
 
     //服务器ID
     @Value("\${QYDisk.id-worker.workerID}")

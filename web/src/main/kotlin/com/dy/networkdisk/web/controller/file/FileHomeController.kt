@@ -4,7 +4,7 @@ import com.dy.networkdisk.api.config.FileConst
 import com.dy.networkdisk.api.dto.file.CreateFolderDTO
 import com.dy.networkdisk.api.dto.file.DeleteDTO
 import com.dy.networkdisk.api.dto.file.RenameDTO
-import com.dy.networkdisk.api.file.FileHomeService
+import com.dy.networkdisk.api.file.FileWebService
 import com.dy.networkdisk.web.tool.sessionID
 import com.dy.networkdisk.web.tool.sessionInfo
 import com.dy.networkdisk.web.tool.toJson
@@ -27,12 +27,12 @@ class FileHomeController @Autowired constructor(
 ) {
 
     @Reference
-    private lateinit var service: FileHomeService
+    private lateinit var service: FileWebService
 
     @GetMapping("/folderTree.json")
     @ResponseBody
     fun getFolderTreeJson(request: HttpServletRequest,id: Long?): String{
-        val result = service.getFolderTreeChildren(request.sessionID,request.sessionInfo.id,id ?: 0L)
+        val result = service.getChildrenFolderTree(request.sessionID,request.sessionInfo.id,id ?: 0L)
         if (result.isSuccess){
             val resultList = ArrayList<FolderTreeJsonVO>()
             for ((k,v) in result.data!!){

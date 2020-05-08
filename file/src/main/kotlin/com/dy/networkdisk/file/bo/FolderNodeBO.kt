@@ -4,7 +4,6 @@ import java.util.*
 
 data class FolderNodeBO(
         val id: Long,
-        val name: String,
-        val mineType: String? = null,
+        var name: String,
         val createTime: Date
 )

@@ -1,4 +1,4 @@
-package com.dy.networkdisk.file.tool
+package com.dy.networkdisk.upload.tool
 
 import com.dy.networkdisk.api.config.IDWorkerConfig
 import org.springframework.beans.factory.annotation.Value
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 @Component
 class IDWorker{
     //服务ID
-    private val serviceID = IDWorkerConfig.FILE_MODULE.id
+    private val serviceID = IDWorkerConfig.UPLOAD_MODULE.id
 
     //服务器ID
     @Value("\${QYDisk.id-worker.workerID}")
