@@ -1,7 +1,7 @@
 package com.dy.networkdisk.web.vo.file
 
 data class MainListJsonVO(
-        val id: Long,
+        val id: String,
         val type: String,
         val order: Int,
         val name: String,

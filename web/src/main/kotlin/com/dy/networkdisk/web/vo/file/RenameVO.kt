@@ -1,8 +1,8 @@
 package com.dy.networkdisk.web.vo.file
 
 data class RenameVO(
-        val parent: Long,
-        val id: Long,
+        val parent: String,
+        val id: String,
         val type: String,
         val name: String
 )

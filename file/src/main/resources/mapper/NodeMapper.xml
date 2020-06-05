@@ -68,6 +68,11 @@
         where id = #{id} and status != 'DELETE'
     </update>
 
+    <select id="findNodeByID" resultType="com.dy.networkdisk.file.po.NodePO">
+        select id, owner, parent, isFolder, file, name, status, createTime
+        from node where id = #{id};
+    </select>
+
     <update id="delete" parameterType="long">
         update node set status = 'DELETE' where id = #{id};
     </update>

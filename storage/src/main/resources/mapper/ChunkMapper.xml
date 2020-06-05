@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dy.networkdisk.upload.dao.ChunkMapper">
+<mapper namespace="com.dy.networkdisk.storage.dao.ChunkMapper">
 
-    <insert id="insert" parameterType="com.dy.networkdisk.upload.po.ChunkPO">
+    <insert id="insert" parameterType="com.dy.networkdisk.storage.po.ChunkPO">
         insert into chunk(id, size, md5, sha256, path, uploader, uploadTime)
         values (#{id},#{size},#{md5},#{sha256},#{path},#{uploader},#{uploadTime})
     </insert>
@@ -15,6 +15,10 @@
           and sha256 = #{sha256}
           and size = #{size}
         limit 1;
+    </select>
+
+    <select id="findChunkByID" resultType="com.dy.networkdisk.storage.po.ChunkPO">
+        select id, size, md5, sha256, path, uploader, uploadTime from chunk where id = #{id};
     </select>
 
 </mapper>

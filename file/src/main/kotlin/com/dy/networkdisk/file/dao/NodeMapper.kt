@@ -22,7 +22,7 @@ interface NodeMapper {
     fun getChildrenFolderTree(
             @Param("userID") userID: Long,
             @Param("parent") parent: Long
-    ): List<Map<String,String>>
+    ): List<Map<String,Any>>
 
     /**
      * 查询文件最新状态
@@ -80,6 +80,11 @@ interface NodeMapper {
             @Param("id")id: Long,
             @Param("status")status: String
     )
+
+    /**
+     * 查询文件信息ID
+     */
+    fun findNodeByID(id: Long): NodePO
 
     /**
      * 删除节点

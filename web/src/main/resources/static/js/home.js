@@ -3,12 +3,14 @@ var main_table_struct = [[
     {field: 'id',hidden: true},
     {field: 'type',hidden: true},
     {field: 'order',hidden:true, sortable:true, order: 'asc'},
-    {field: 'check',checkbox: true},
+//    {field: 'check',checkbox: true},
     {field: 'name',title:'文件名',width: '40%',resizable: false,sortable: true},
     {field: 'status',title:'状态',width: '19%',resizable: false,sortable: true},
     {field: 'size',title: '大小',width: '20%',resizable: false,sortable: true},
     {field: 'createTime',title: '上传时间',width: '20%',resizable: false,sortable: true}
 ]];
+
+var menuClickRow;
 
 //UI初始化
 $(function () {
@@ -17,11 +19,8 @@ $(function () {
         fit: true,
         border: false
     });
-    //折叠面板-搜索
-    $("#search").searchbox({
-        prompt: "搜索文件",
-        searcher: onSearch
-    });
+    //折叠面板-时间
+    setInterval("updateTime()",1000);
     //折叠面板-目录树
     $("#folder-tree").tree({
         url: '/file/folderTree.json',
@@ -64,11 +63,58 @@ $(function () {
 });
 
 /**
- * 搜索
- * @param value 关键词
+ * 更新时间
  */
-function onSearch(value) {
-    //TODO 文件搜索
+function updateTime() {
+    //创建日期时间对象
+    var datetime = new Date();
+    //获取组件
+    var year = datetime.getFullYear();
+    var month = datetime.getMonth() + 1;
+    var day = datetime.getDate();
+    var hour = datetime.getHours();
+    var minute = datetime.getMinutes();
+    var second = datetime.getSeconds();
+    var week = datetime.getDay();
+    //转换星期格式
+    switch (week) {
+        case 0:
+            var week = '星期日';
+            break;
+        case 1:
+            var week = '星期一';
+            break;
+        case 2:
+            var week = '星期二';
+            break;
+        case 3:
+            var week = '星期三';
+            break;
+        case 4:
+            var week = '星期四';
+            break;
+        case 5:
+            var week = '星期五';
+            break;
+        case 6:
+            var week = '星期六';
+            break;
+    }
+    //小时,分钟,秒如果小于10加上前导零
+    if (hour < 10) {
+        var hour = 0 + "" + hour;
+    }
+    if (minute < 10) {
+        var minute = 0 + "" + minute;
+    }
+    if (second < 10) {
+        var second = 0 + "" + second;
+    }
+    //组合时间
+    var date = year + "年" + month + "月" + day + "日" + " " + week;
+    var time = hour + " : " + minute + " : " + second;
+    $("#date").text(date);
+    $("#time").text(time);
 }
 
 /**
@@ -80,7 +126,8 @@ function toRoot() {
     tmp = JSON.stringify(root_node);
     current_node = JSON.parse(tmp);
     current_parent = root_id;
-    $("#main-table").datagrid('load');
+    $("#main-table").datagrid('load',current_node.params);
+    $("#path_msg").text(current_node.path);
 }
 
 /**
@@ -93,7 +140,8 @@ function toParent() {
         return
     }
     current_node = target_node;
-    $("#main-table").datagrid('load');
+    $("#main-table").datagrid('load',current_node.params);
+    $("#path_msg").text(current_node.path);
 }
 
 /**
@@ -112,15 +160,18 @@ function onContextMenu(e,index,row) {
         menu.menu('disableItem',$("#cut_menu_item"));
         menu.menu('disableItem',$("#rename_menu_item"));
         menu.menu('disableItem',$("#delete_menu_item"));
+        menu.menu('disableItem',$("#share_menu_item"));
     }
     else {
         if (row.type === 'FOLDER'){
             menu.menu('disableItem',$("#download_menu_item"));
             menu.menu('enableItem',$("#open_menu_item"));
+            menu.menu('disableItem',$("#share_menu_item"));
         }
         else {
             menu.menu('disableItem',$("#open_menu_item"));
             menu.menu('enableItem',$("#download_menu_item"));
+            menu.menu('enableItem',$("#share_menu_item"));
         }
         menu.menu('enableItem',$("#copy_menu_item"));
         menu.menu('enableItem',$("#cut_menu_item"));
@@ -133,7 +184,7 @@ function onContextMenu(e,index,row) {
     else {
         menu.menu('enableItem',$("#paste_menu_item"));
     }
-    menu.row = row;
+    menuClickRow = row;
     menu.menu('show',{left: e.pageX,top: e.pageY})
 }
 
@@ -141,7 +192,7 @@ function onContextMenu(e,index,row) {
  * 主目录右键菜单点击事件
  */
 function onContextMenuClick(item) {
-    let row = $("#context-menu").row;
+    let row = menuClickRow;
     switch (item.id) {
         case 'reload_menu_item': {
             $("#main-table").datagrid('load');
@@ -152,7 +203,7 @@ function onContextMenuClick(item) {
             break
         }
         case 'download_menu_item': {
-            alert("下载未实现");
+            onDownload(row);
             break
         }
         case 'copy_menu_item': {
@@ -180,6 +231,13 @@ function onContextMenuClick(item) {
 }
 
 /**
+ * 下载
+ */
+function onDownload(row) {
+    window.open("/download?id=" + row.id,"_blank");
+}
+
+/**
  * 打开文件夹
  */
 function onOpenDir(row) {
@@ -188,14 +246,15 @@ function onOpenDir(row) {
         let tmpObj = JSON.parse(tmp);
         node_stack.push(tmpObj);
         current_node = {
-            path: tmpObj.path + "/" + row.name,
+            path: tmpObj.path + "/" + row.name.replace(/<[^>]+>/g,""),
             remote: '/file/children.json',
             params: {
                 id: row.id
             }
         };
         current_parent = row.id;
-        $("#main-table").datagrid('load')
+        $("#main-table").datagrid('load',current_node.params);
+        $("#path_msg").text(current_node.path);
     }
 }
 
@@ -289,7 +348,7 @@ function onDelete(row) {
         if (!value){
             return;
         }
-        if (value !== row.name.text()){
+        if (value !== row.name.replace(/<[^>]+>/g,"")){
             console.log(value + "--" + row.name);
             $.messager.alert('取消删除','您的输入与目标不符，本次删除已经取消','info');
             return

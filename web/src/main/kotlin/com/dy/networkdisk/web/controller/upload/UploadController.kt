@@ -1,8 +1,8 @@
 package com.dy.networkdisk.web.controller.upload
 
-import com.dy.networkdisk.api.dto.upload.BeforeUploadDTO
-import com.dy.networkdisk.api.dto.upload.UploadDTO
-import com.dy.networkdisk.api.upload.UploadService
+import com.dy.networkdisk.api.dto.storage.BeforeUploadDTO
+import com.dy.networkdisk.api.dto.storage.UploadDTO
+import com.dy.networkdisk.api.storage.UploadService
 import com.dy.networkdisk.web.tool.sessionID
 import com.dy.networkdisk.web.tool.sessionInfo
 import com.dy.networkdisk.web.tool.toJson
@@ -15,12 +15,8 @@ import org.apache.dubbo.config.annotation.Reference
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
-import sun.security.provider.MD5
-import java.security.MessageDigest
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import javax.servlet.http.HttpServletRequest
 
 @Controller
@@ -35,27 +31,39 @@ class UploadController @Autowired constructor(
     @GetMapping("/before")
     @ResponseBody
     fun beforeUpload(request: HttpServletRequest,vo: BeforeUploadVO): String{
+        val mParent = vo.parent.toLongOrNull(16) ?: return ResultJsonVO<Long>(status = false,msg = "参数错误！").toJson()
         val result = service.beforeUpload(BeforeUploadDTO(
                 sessionID = request.sessionID,
                 userID = request.sessionInfo.id,
-                parent = vo.parent,
+                parent = mParent,
                 name = vo.name,
                 mime = vo.mime,
                 size = vo.size
         ))
-        return ResultJsonVO<Long>(status = result.isSuccess,msg = result.msg).toJson()
+        return ResultJsonVO(status = result.isSuccess,msg = result.msg,data = result.data).toJson()
     }
 
     @PostMapping("/chunk")
-    fun upload(vo: UploadVO) {
+    @ResponseBody
+    fun upload(
+            @RequestParam("task")task: Long,
+            @RequestParam(value = "chunks")chunks: Int?,
+            @RequestParam(value = "chunk")chunk: Int?,
+            @RequestParam("size")size: Long,
+            @RequestParam("file")file: MultipartFile
+    ) {
+        val content = file.inputStream.use {
+            it.readBytes()
+        }
         GlobalScope.launch {
             service.upload(UploadDTO(
-                    id = vo.QYUploadID,
-                    chunks = vo.chunks,
-                    chunk = vo.chunk,
-                    size = vo.size,
-                    file = vo.file.inputStream
+                    id = task,
+                    chunks = chunks ?: 1,
+                    chunk = chunk ?: 1,
+                    size = size,
+                    file = content
             ))
+            println("task=${task};chunk=${chunk}/${chunks};content=${content}")
         }
     }
 }

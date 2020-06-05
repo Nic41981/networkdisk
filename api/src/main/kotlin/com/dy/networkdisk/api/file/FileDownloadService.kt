@@ -1,9 +1,10 @@
 package com.dy.networkdisk.api.file
 
 import com.dy.networkdisk.api.dto.QYResult
+import com.dy.networkdisk.api.dto.file.FileInfoDTO
 
 interface FileDownloadService {
 
-    fun checkDownloadPermission(node: Long,owner: Long): QYResult<Unit>
+    fun checkFileInfo(node: Long, owner: Long): QYResult<FileInfoDTO>
 
 }

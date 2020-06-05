@@ -30,10 +30,11 @@ class SessionInterceptor @Autowired constructor(
     }
 
     private fun findSessionID(request: HttpServletRequest): String?{
-        val cookies = request.cookies
-        for (cookie in cookies){
-            if (cookie.name == Const.SESSION_KEY && !cookie.value.isNullOrBlank()){
-                return cookie.value
+        request.cookies?.let {
+            for (cookie in it){
+                if (cookie.name == Const.SESSION_KEY && !cookie.value.isNullOrBlank()){
+                    return cookie.value
+                }
             }
         }
         return null

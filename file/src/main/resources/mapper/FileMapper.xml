@@ -9,11 +9,16 @@
         values (#{id},#{size},#{mime},#{uploader},#{uploadTime})
     </insert>
     
-    <select id="selectSizesAndMimesByIds">
+    <select id="selectSizesAndMimesByIds" resultType="map">
         select id, size, mime from file
         where id in <foreach collection="list" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </select>
+
+    <select id="findFileByID" resultType="com.dy.networkdisk.file.po.FilePO">
+        select id, size, mime, uploader, uploadTime from file
+        where id = #{id}
     </select>
 
 </mapper>
