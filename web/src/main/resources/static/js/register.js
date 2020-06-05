@@ -42,7 +42,7 @@ $(function () {
     });
     //验证码图片
     $("#vc-img").click(function () {
-        $(this).attr("src", "/verification?");
+        $(this).attr("src", "/tool/verification?");
     });
     //帮助按钮
     $("#login-account-btn").tooltip({

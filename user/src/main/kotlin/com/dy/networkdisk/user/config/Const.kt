@@ -1,5 +1,8 @@
 package com.dy.networkdisk.user.config;
 
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+
 class Const {
     companion object {
         //用户状态

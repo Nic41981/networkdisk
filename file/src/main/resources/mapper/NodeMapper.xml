@@ -68,6 +68,10 @@
         where id = #{id} and status != 'DELETE'
     </update>
 
+    <select id="findFileIDByID" resultType="long">
+        select file from node where id = #{id};
+    </select>
+
     <update id="delete" parameterType="long">
         update node set status = 'DELETE' where id = #{id};
     </update>

@@ -1,7 +1,7 @@
 package com.dy.networkdisk.web.vo.file
 
 data class DeleteVO(
-        val parent: Long,
-        val id: Long,
+        val parent: String,
+        val id: String,
         val type: String
 )

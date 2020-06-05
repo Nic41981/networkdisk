@@ -18,7 +18,7 @@
     <link rel="stylesheet"
           type="text/css"
           href="../static/style/home_style.css"
-          th:href="'/style/main_style.css'"/>
+          th:href="'/style/home_style.css'"/>
     <script type="text/javascript"
             src="../static/js/jquery-3.4.1.min.js"
             th:src="'/js/jquery-3.4.1.min.js'">
@@ -107,7 +107,7 @@
     </div>
     <script id="values" type="text/javascript" th:attr="root_id=${rootID}" th:inline="javascript">
         //根节点ID
-        let root_id = $("#values").data("root_id");
+        let root_id = $("#values").attr("root_id");
         //节点栈
         var node_stack = [];
         //当前父节点ID

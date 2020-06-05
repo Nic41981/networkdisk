@@ -20,6 +20,7 @@ import org.apache.dubbo.config.annotation.Service as DubboService
 import javax.annotation.Resource
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 @Service
 @DubboService
@@ -91,18 +92,21 @@ class FileWebServiceImpl(
      */
     override fun getChildrenFolderTree(sessionID: Long, userID: Long, parent: Long): QYResult<Map<Long, String>> {
         val key = "${CommonConst.FUNC_SESSION_REDIS_KEY}:${sessionID}"
-        val hashKey = "folderTree-${parent}"
+        val hashKey = "${FileConst.NodeType.FOLDER.name}-${parent}"
         //读取缓存
-        hashOps[key, hashKey].fromJson<HashMap<Long, String>>()?.let {
-            return QYResult.success(data = it)
+        hashOps[key, hashKey].fromJson<List<FolderNodeBO>>()?.let {
+            val resultMap = LinkedHashMap<Long,String>()
+            for (bo in it){
+                resultMap[bo.id] = bo.name
+            }
+            return QYResult.success(data = resultMap)
         }
         //查询数据库
         val result = hashMapOf<Long, String>()
         val resultList = nodeMapper.getChildrenFolderTree(userID, parent)
         for (map in resultList) {
-            map["id"]?.let {
-                result[it.toLong()] = map["name"] ?: "Error"
-            }
+            val id = map["id"] as? Long? ?: continue
+            result[id] = map["name"] as? String? ?: "Error"
         }
         //写缓存
         hashOps.put(key, hashKey, result.toJson())
@@ -194,18 +198,24 @@ class FileWebServiceImpl(
                 userID = userID,
                 parent = parent
         )
+        //节点为空直接返回
+        if (nodeList.isEmpty()){
+            val boList = ArrayList<FileNodeBO>()
+            hashOps.put(key,hashKey,boList.toJson())
+            return boList
+        }
+        //获取文件信息
         val idList = ArrayList<Long>(nodeList.size)
         for (node in nodeList){
             idList.add(node.id)
         }
-        //获取文件信息
         val fileList = fileMapper.selectSizesAndMimesByIds(idList)
         val mimeMap = HashMap<Long,String>()
         val sizeMap = HashMap<Long,Long>()
         for (file in fileList){
-            val id = file["id"]?.toLong() ?: continue
-            mimeMap[id] = file["mime"] ?: "application/octet-stream"
-            sizeMap[id] = file["size"]?.toLong() ?: -1L
+            val id = file["id"] as? Long? ?: continue
+            mimeMap[id] = file["mime"] as? String? ?: "application/octet-stream"
+            sizeMap[id] = file["size"] as? Long? ?: 0L
         }
         //组装数据
         val boList = ArrayList<FileNodeBO>(nodeList.size)
@@ -265,7 +275,7 @@ class FileWebServiceImpl(
             ))
             //更新缓存
             val sessionKey = "${CommonConst.FUNC_SESSION_REDIS_KEY}:${dto.sessionID}"
-            val hashKey = "${FileConst.NodeType.FOLDER.name.toLowerCase()}-${dto.parent}"
+            val hashKey = "${FileConst.NodeType.FOLDER.name}-${dto.parent}"
             val boList = hashOps[sessionKey,hashKey].fromJson<ArrayList<FolderNodeBO>>()
             boList?.let {
                 it.add(FolderNodeBO(

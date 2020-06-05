@@ -10,6 +10,8 @@ var main_table_struct = [[
     {field: 'createTime',title: '上传时间',width: '20%',resizable: false,sortable: true}
 ]];
 
+var menuClickRow;
+
 //UI初始化
 $(function () {
     //折叠面板
@@ -133,7 +135,7 @@ function onContextMenu(e,index,row) {
     else {
         menu.menu('enableItem',$("#paste_menu_item"));
     }
-    menu.row = row;
+    menuClickRow = row;
     menu.menu('show',{left: e.pageX,top: e.pageY})
 }
 
@@ -141,7 +143,7 @@ function onContextMenu(e,index,row) {
  * 主目录右键菜单点击事件
  */
 function onContextMenuClick(item) {
-    let row = $("#context-menu").row;
+    let row = menuClickRow;
     switch (item.id) {
         case 'reload_menu_item': {
             $("#main-table").datagrid('load');
@@ -152,7 +154,7 @@ function onContextMenuClick(item) {
             break
         }
         case 'download_menu_item': {
-            alert("下载未实现");
+            onDownload(row);
             break
         }
         case 'copy_menu_item': {
@@ -177,6 +179,20 @@ function onContextMenuClick(item) {
         default: {
         }
     }
+}
+
+/**
+ * 下载
+ */
+function onDownload(row) {
+    $.ajax({
+        url: "/download",
+        async: true,
+        data: {
+            id: row.id
+        },
+        type: "GET"
+    })
 }
 
 /**
@@ -289,7 +305,7 @@ function onDelete(row) {
         if (!value){
             return;
         }
-        if (value !== row.name.text()){
+        if (value !== row.name.replace(/<[^>]+>/g,"")){
             console.log(value + "--" + row.name);
             $.messager.alert('取消删除','您的输入与目标不符，本次删除已经取消','info');
             return

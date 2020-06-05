@@ -8,6 +8,7 @@ interface FileMapper {
 
     fun insert(po: FilePO)
 
-    fun selectSizesAndMimesByIds(ids: List<Long>): List<Map<String,String>>
+    fun selectSizesAndMimesByIds(ids: List<Long>): List<Map<String,Any>>
 
+    fun findFileByID(id: Long): FilePO
 }

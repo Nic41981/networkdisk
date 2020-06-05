@@ -1,17 +1,17 @@
 package com.dy.networkdisk.file.service
 
+import com.dy.networkdisk.api.config.CommonConst
 import com.dy.networkdisk.api.config.FileConst
 import com.dy.networkdisk.api.dto.QYResult
 import com.dy.networkdisk.api.dto.file.CreateUploadingFileDTO
 import com.dy.networkdisk.api.file.FileUploadService
+import com.dy.networkdisk.file.bo.FileNodeBO
 import com.dy.networkdisk.file.config.Const
 import com.dy.networkdisk.file.dao.FileMapper
 import com.dy.networkdisk.file.dao.NodeMapper
 import com.dy.networkdisk.file.po.FilePO
 import com.dy.networkdisk.file.po.NodePO
-import com.dy.networkdisk.file.tool.IDWorker
-import com.dy.networkdisk.file.tool.getLockWithDelay
-import com.dy.networkdisk.file.tool.removeLock
+import com.dy.networkdisk.file.tool.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -23,6 +23,8 @@ import javax.annotation.Resource
 class FileUploadServiceImpl @Autowired constructor(
         val idWorker: IDWorker
 ): FileUploadService {
+
+    private val hashOps = RedisUtils.getHashOps()
 
     @Resource
     private lateinit var nodeMapper: NodeMapper
@@ -58,12 +60,13 @@ class FileUploadServiceImpl @Autowired constructor(
             }
             //创建文件信息
             val fileId = idWorker.nextId()
+            val time = Date()
             fileMapper.insert(FilePO(
                     id = fileId,
                     size = dto.size,
                     mime = dto.mime,
                     uploader = dto.userID,
-                    uploadTime = Date()
+                    uploadTime = time
             ))
             //创建节点
             val nodeId = idWorker.nextId()
@@ -75,8 +78,22 @@ class FileUploadServiceImpl @Autowired constructor(
                     file = fileId,
                     name = dto.name,
                     status = FileConst.Status.UPLOADING.name,
-                    createTime = Date()
+                    createTime = time
             ))
+            //添加缓存
+            val key = "${CommonConst.FUNC_SESSION_REDIS_KEY}:${dto.sessionID}"
+            val hashKey = "${FileConst.NodeType.FILE.name}-${dto.parent}"
+            hashOps[key,hashKey].fromJson<ArrayList<FileNodeBO>>()?.let {
+                it.add(FileNodeBO(
+                        id = nodeId,
+                        name = dto.name,
+                        mimeType = dto.mime,
+                        status = FileConst.Status.UPLOADING.name,
+                        size = dto.size,
+                        createTime = time
+                ))
+                hashOps.put(key,hashKey,it.toJson())
+            }
             return QYResult.success(data = Pair(nodeId,fileId))
         } catch (e: Exception){
         } finally {
@@ -92,6 +109,6 @@ class FileUploadServiceImpl @Autowired constructor(
         else {
             FileConst.Status.FAIL.name
         }
-        nodeMapper.updateFileStatus()
+        nodeMapper.updateFileStatus(nodeID,targetStatus)
     }
 }

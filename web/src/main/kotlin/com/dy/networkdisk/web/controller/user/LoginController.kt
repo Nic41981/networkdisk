@@ -71,6 +71,8 @@ class LoginController @Autowired constructor(
         if (service.isGuest(vo.email,vo.password)){
             return model.apply {
                 viewName = "login"
+                val allowRegister = config.getBoolean(ConfigInfo.WEB_REGISTER_ALLOW, true)
+                model.addObject("allow_register", allowRegister)
                 addObject(ResultDialogVO.NAME,ResultDialogVO(
                         title = "登录失败",
                         type = ResultDialogVO.TYPE_INFO,
@@ -89,6 +91,8 @@ class LoginController @Autowired constructor(
             //登录失败
             return model.apply {
                 viewName = "login"
+                val allowRegister = config.getBoolean(ConfigInfo.WEB_REGISTER_ALLOW, true)
+                model.addObject("allow_register", allowRegister)
                 addObject(ResultDialogVO.NAME, ResultDialogVO(
                         title = "登录失败",
                         type = "info",
@@ -102,6 +106,8 @@ class LoginController @Autowired constructor(
         if (loginLimit && CommonConst.USER_TYPE_NORMAL == data.type) {
             return model.apply {
                 viewName = "login"
+                val allowRegister = config.getBoolean(ConfigInfo.WEB_REGISTER_ALLOW, true)
+                model.addObject("allow_register", allowRegister)
                 addObject(ResultDialogVO.NAME,ResultDialogVO(
                         title = "登录失败",
                         type = ResultDialogVO.TYPE_INFO,
