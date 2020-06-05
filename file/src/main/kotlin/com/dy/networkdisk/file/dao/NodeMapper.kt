@@ -84,7 +84,7 @@ interface NodeMapper {
     /**
      * 查询文件信息ID
      */
-    fun findFileIDByID(id: Long): Long
+    fun findNodeByID(id: Long): NodePO
 
     /**
      * 删除节点

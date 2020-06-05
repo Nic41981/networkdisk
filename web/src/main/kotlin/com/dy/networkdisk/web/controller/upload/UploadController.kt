@@ -63,6 +63,7 @@ class UploadController @Autowired constructor(
                     size = size,
                     file = content
             ))
+            println("task=${task};chunk=${chunk}/${chunks};content=${content}")
         }
     }
 }

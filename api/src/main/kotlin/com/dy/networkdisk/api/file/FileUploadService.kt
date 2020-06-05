@@ -7,5 +7,5 @@ interface FileUploadService {
 
     fun createUploadingFile(dto: CreateUploadingFileDTO): QYResult<Pair<Long, Long>>
 
-    fun onUploadFinish(nodeID: Long, result: Boolean)
+    fun onUploadFinish(nodeID: Long, hasError: Boolean)
 }

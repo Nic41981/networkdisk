@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import java.net.URLEncoder
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -34,7 +35,10 @@ class DownloadController @Autowired constructor(
         if (infoResult.isSuccess){
             val info = infoResult.data!!
             //设置相应信息
+            val fileName = URLEncoder.encode(info.name,"UTF-8")
             response.contentType = info.mime
+            response.addHeader("Content-Disposition", "attachment;filename=${fileName}")
+            response.addHeader("Content-Length", info.size.toString())
             response.setContentLengthLong(info.size)
             //创建缓存池
             val cacheSize = config.getInteger(ConfigInfo.DOWNLOAD_CACHE_SIZE,2) + 1

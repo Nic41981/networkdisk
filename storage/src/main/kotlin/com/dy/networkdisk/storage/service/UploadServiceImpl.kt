@@ -19,14 +19,19 @@ import com.dy.networkdisk.storage.tool.template
 import org.apache.dubbo.config.annotation.Reference
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import sun.misc.BASE64Encoder
 import java.io.File
+import java.io.UnsupportedEncodingException
 import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.annotation.Resource
-import javax.crypto.Cipher
+import javax.crypto.*
 import javax.crypto.spec.SecretKeySpec
 import org.apache.dubbo.config.annotation.Service as DubboService
+
 
 @Service
 @DubboService
@@ -83,6 +88,7 @@ class UploadServiceImpl @Autowired constructor(
     }
 
     override fun upload(dto: UploadDTO) {
+        println(dto)
         val key = "${Const.UPLOAD_RECORD_REDIS_KEY}:${dto.id}"
         val nodeID = (hashOps[key,"nodeID"] ?: return).toLong()
         val fileID = (hashOps[key,"fileID"] ?: return).toLong()
@@ -113,8 +119,8 @@ class UploadServiceImpl @Autowired constructor(
                 }
             }
             //加密分块
-            val password = getMD5((md5 + sha256 + dto.size).toByteArray()).toByteArray()
-            val encodedContent = getAESEncode(content,password)
+            val password = getMD5((md5 + sha256 + dto.size).toByteArray())
+            val encodedContent = toAESEncode(content,password) ?: error("加密异常")
             //写入分块
             val chunkID = idWorker.nextId()
             val path = "./data/${chunkID}"
@@ -174,11 +180,23 @@ class UploadServiceImpl @Autowired constructor(
         }
     }
 
-    fun getAESEncode(content: ByteArray,key: ByteArray): ByteArray{
-        val sKey = SecretKeySpec(key,"AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.ENCRYPT_MODE,sKey)
-        return cipher.doFinal(content)
+    fun toAESEncode(content: ByteArray,key: String): ByteArray?{
+        kotlin.runCatching {
+            val originalKey = KeyGenerator.getInstance("AES").run {
+                init(128,SecureRandom.getInstance("SHA1PRNG").apply {
+                    setSeed(key.toByteArray())
+                })
+                generateKey().encoded
+            }
+            val keySpec = SecretKeySpec(originalKey, "AES")
+            val cipher = Cipher.getInstance("AES").apply {
+                init(Cipher.ENCRYPT_MODE,keySpec)
+            }
+            return cipher.doFinal(content)
+        }.onFailure {
+            it.printStackTrace()
+        }
+        return null
     }
 
 }

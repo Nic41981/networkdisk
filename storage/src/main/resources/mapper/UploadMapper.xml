@@ -9,10 +9,10 @@
         values (#{id},#{file},#{chunk},#{sequence},#{uploader},#{uploadTime});
     </insert>
 
-    <select id="selectChunkIDList">
+    <select id="selectChunkIDList" parameterType="long" resultType="long">
         select chunk
         from upload
-        where id = #{id}
+        where file = #{id}
         order by sequence;
     </select>
 

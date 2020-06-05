@@ -58,14 +58,16 @@
         <h1 th:text="${title}" class="title-big">青叶网盘</h1>
     </div>
     <div id="west_panel"
-         data-options="region:'west',width:'20%',height:'80%',hideCollapsedContent:false,expandMode:'dock'"
+         data-options="region:'west',width:'18%',height:'80%',hideCollapsedContent:false,expandMode:'dock'"
          title="快捷导航">
         <div id="navigation">
             <div data-options="collapsed:false,collapsible:false" style="padding:10px;">
-                <input id="search" style="width:100%;">
+                <p id="date"></p>
+                <p id="time"></p>
+                <p id="user" th:text="'欢迎回来，' + ${nickname} + '!'">欢迎回来，nic!</p>
             </div>
-            <div title="最近访问" style="padding:10px;">
-            </div>
+<!--            <div title="最近访问" style="padding:10px;">-->
+<!--            </div>-->
             <div title="跳转" style="padding:10px">
                 <ul id="folder-tree"></ul>
             </div>
@@ -81,7 +83,7 @@
             <div id="upload-btn" style="width: 60px;float: right" href="javascript:void(0)">上传</div>
         </div>
         <div id="footer">
-            <b>当前：</b><span>/root</span>
+            <b>当前：</b><span id="path_msg">/root</span>
         </div>
     </div>
     <div id="context-menu">
@@ -96,6 +98,8 @@
         <div class="menu-sep"></div>
         <div id="rename_menu_item">重命名</div>
         <div id="delete_menu_item">删除</div>
+        <div class="menu-sep"></div>
+        <div id="share_menu_item">分享</div>
     </div>
     <div id="uploader">
         <!--用来存放文件信息-->

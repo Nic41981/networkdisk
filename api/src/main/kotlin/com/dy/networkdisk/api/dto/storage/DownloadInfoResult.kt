@@ -5,6 +5,7 @@ import java.io.Serializable
 
 @NoArg
 data class DownloadInfoResult (
+        val name: String,
         val size: Long,
         val mime: String,
         val list: List<Long>

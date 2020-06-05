@@ -33,10 +33,11 @@ class FileDownloadServiceImpl: FileDownloadService {
         if (status != FileConst.Status.NORMAL.name){
             return QYResult.fail(msg = "文件当前无法下载")
         }
-        val fileID = nodeMapper.findFileIDByID(node)
-        val file = fileMapper.findFileByID(fileID)
+        val nodeInfo = nodeMapper.findNodeByID(node)
+        val file = fileMapper.findFileByID(nodeInfo.file!!)
         return QYResult.success(data = FileInfoDTO(
-                id = fileID,
+                id = file.id,
+                name = nodeInfo.name,
                 size = file.size,
                 mime = file.mime
         ))

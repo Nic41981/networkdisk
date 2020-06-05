@@ -22,6 +22,7 @@ class MainController @Autowired constructor(
         val rootID = service.getRootID(request.sessionInfo.id) ?: error("")
         return model.apply {
             viewName = "home"
+            addObject("nickname",request.sessionInfo.nickname)
             addObject("rootID", rootID.toString(16))
         }
     }

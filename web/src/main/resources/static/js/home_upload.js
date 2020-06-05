@@ -20,7 +20,9 @@ $(function () {
         chunked: true,
         chunkSize: 1024 * 1024, //分片大小1M
         chunkRetry: 3, //分片重试3次
-        threads: 5 //线程数5
+        threads: 5, //线程数5
+        fileSizeLimit: 2 * 1024 * 1024 * 1024,
+        fileSingleSizeLimit: 1024 * 1024 * 1024
     });
     uploader.addButton('#add-file-btn')
 });
@@ -106,7 +108,7 @@ function onFileQueued(file){
     box.append(title);
     //状态行
     let status = $('<div>',{
-        text: '上传准备中',
+        text: '等待上传',
         class: 'file_list_status'
     });
     box.append(status);
@@ -118,13 +120,13 @@ function onFileQueued(file){
     //组装
     file_list.append(box);
     $.parser.parse(box);
-    uploader.md5File(file)
-        .then(
-            function(val) {
-                uploader.options.formData.md5 = val;
-                status.text("等待上传");
-            }
-        )
+//    uploader.md5File(file)
+//        .then(
+//            function(val) {
+//                uploader.options.formData.md5 = val;
+//                status.text("等待上传");
+//            }
+//        )
 }
 
 //上传分片前

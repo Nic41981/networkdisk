@@ -11,15 +11,20 @@ import com.dy.networkdisk.storage.dao.UploadMapper
 import com.dy.networkdisk.storage.po.DownloadPO
 import com.dy.networkdisk.storage.tool.IDWorker
 import org.apache.dubbo.config.annotation.Reference
-import org.apache.dubbo.config.annotation.Service as DubboService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import sun.misc.BASE64Decoder
 import java.io.File
+import java.io.IOException
 import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
 import java.util.*
 import javax.annotation.Resource
-import javax.crypto.Cipher
+import javax.crypto.*
 import javax.crypto.spec.SecretKeySpec
+import org.apache.dubbo.config.annotation.Service as DubboService
+
 
 @Service
 @DubboService
@@ -68,6 +73,7 @@ class DownloadServiceImpl @Autowired constructor(
                 downloadTime = Date()
         ))
         return QYResult.success(data = DownloadInfoResult(
+                name = file.name,
                 size = file.size,
                 mime = file.mime,
                 list = list
@@ -76,10 +82,11 @@ class DownloadServiceImpl @Autowired constructor(
 
     override fun getChunk(id: Long): QYResult<ByteArray> {
         val chunk = chunkMapper.findChunkByID(id)
-        val password = getMD5((chunk.md5 + chunk.sha256 + chunk.size).toByteArray()).toByteArray()
+        val password = getMD5((chunk.md5 + chunk.sha256 + chunk.size).toByteArray())
         val file = File(chunk.path)
         val encodedContent = file.inputStream().use { it.readBytes() }
-        return QYResult.success(data = getAESDecode(encodedContent,password))
+        val decodeContent = toAESDecode(encodedContent,password) ?: return QYResult.fail(msg = "解密失败")
+        return QYResult.success(data = decodeContent)
     }
 
     fun getMD5(content: ByteArray): String{
@@ -92,10 +99,22 @@ class DownloadServiceImpl @Autowired constructor(
         }
     }
 
-    fun getAESDecode(content: ByteArray,key: ByteArray): ByteArray{
-        val sKey = SecretKeySpec(key,"AES")
-        val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
-        cipher.init(Cipher.DECRYPT_MODE,sKey)
-        return cipher.doFinal(content)
+    fun toAESDecode(content: ByteArray,key: String): ByteArray?{
+        kotlin.runCatching {
+            val originalKey = KeyGenerator.getInstance("AES").run {
+                init(128, SecureRandom.getInstance("SHA1PRNG").apply {
+                    setSeed(key.toByteArray())
+                })
+                generateKey().encoded
+            }
+            val keySpec = SecretKeySpec(originalKey,"AES")
+            val cipher = Cipher.getInstance("AES").apply {
+                init(Cipher.DECRYPT_MODE,keySpec)
+            }
+            return cipher.doFinal(content)
+        }.onFailure {
+            it.printStackTrace()
+        }
+        return null
     }
 }

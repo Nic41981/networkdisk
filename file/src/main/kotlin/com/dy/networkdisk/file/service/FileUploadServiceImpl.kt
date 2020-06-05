@@ -13,6 +13,7 @@ import com.dy.networkdisk.file.po.FilePO
 import com.dy.networkdisk.file.po.NodePO
 import com.dy.networkdisk.file.tool.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import java.util.*
 import org.apache.dubbo.config.annotation.Service as DubboService
@@ -21,10 +22,11 @@ import javax.annotation.Resource
 @Service
 @DubboService
 class FileUploadServiceImpl @Autowired constructor(
+        template: StringRedisTemplate,
         val idWorker: IDWorker
 ): FileUploadService {
 
-    private val hashOps = RedisUtils.getHashOps()
+    private val hashOps = template.opsForHash<String,String>()
 
     @Resource
     private lateinit var nodeMapper: NodeMapper
@@ -102,12 +104,12 @@ class FileUploadServiceImpl @Autowired constructor(
         return QYResult.fail(msg = "节点创建失败")
     }
 
-    override fun onUploadFinish(nodeID: Long, result: Boolean) {
-        val targetStatus = if (result){
-            FileConst.Status.NORMAL.name
+    override fun onUploadFinish(nodeID: Long, hasError: Boolean) {
+        val targetStatus = if (hasError){
+            FileConst.Status.FAIL.name
         }
         else {
-            FileConst.Status.FAIL.name
+            FileConst.Status.NORMAL.name
         }
         nodeMapper.updateFileStatus(nodeID,targetStatus)
     }

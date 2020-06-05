@@ -3,3 +3,4 @@ networkdisk.iml
 start_env.sh
 *.rdb
 /conf/
+data/
